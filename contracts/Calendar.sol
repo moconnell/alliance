@@ -32,10 +32,15 @@ contract Calendar is Ownable {
         uint256 _meetingDatetime
     );
 
+    event MeetingCancelled(
+        address indexed _attendee,
+        uint256 _meetingDatetime
+    );
+
     constructor(
         int8 _timezone,
         string memory _emailAddress,
-        address newOwner,
+        address _newOwner,
         Day[] memory _availableDays,
         uint256 _availableStartTime,
         uint256 _availableEndTime,
@@ -53,7 +58,7 @@ contract Calendar is Ownable {
         availableEndTime = _availableEndTime;
         duration = _duration;
 
-        transferOwnership(newOwner);
+        transferOwnership(_newOwner);
     }
 
     function bookMeeting(uint256 _datetime) external {
@@ -64,7 +69,11 @@ contract Calendar is Ownable {
         require(meetingSchedule[_datetime] == address(0), "bookMeeting::time already booked."); 
         require(_datetime > block.timestamp, "bookMeeting::cant book in past");
 
-        // ToDo: Add day check
+        Day day = Day(
+            DateTime.getDayOfWeek(_datetime) - 1
+        );
+
+        require(availableDays[day], "bookMeeting::day unavailable");
 
         meetingSchedule[_datetime] = msg.sender;
 
@@ -75,7 +84,7 @@ contract Calendar is Ownable {
         require(meetingSchedule[_datetime] == msg.sender, "cancelMeeting::cant cancel meeting that isnt yours."); 
         meetingSchedule[_datetime] = address(0);
 
-        // ToDo: Emit event
+        emit MeetingCancelled(msg.sender, _datetime);
     }
 
     function withdraw() external {
