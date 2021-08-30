@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.3;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./DateTime.sol";
 
+
 contract Calendar is Ownable {
-    using SafeMath for uint256;
 
     enum Day {
         MONDAY,
