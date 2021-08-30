@@ -3,7 +3,7 @@ pragma solidity 0.7.3;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@quant-finance/solidity-datetime/contracts/DateTime.sol";
+import "./DateTime.sol";
 
 contract Calendar is Ownable {
     using SafeMath for uint256;
