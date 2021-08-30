@@ -21,14 +21,16 @@ contract CalendarFactory {
         uint256 _availableEndTime,
         uint256 _duration
     ) external {
-        Calendar cal = new Calendar(
-            _timezone,
-            _emailAddress,
-            _newOwner,
-            _availableDays,
-            _availableStartTime,
-            _availableEndTime,
-            _duration
+        Calendar cal = new Calendar();
+
+        cal.initialize(
+        _timezone,
+        _emailAddress,
+        _newOwner,
+        _availableDays,
+        _availableStartTime,
+        _availableEndTime,
+        _duration
         );
 
         address calAddr = address(cal);

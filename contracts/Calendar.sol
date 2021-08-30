@@ -2,10 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "./DateTime.sol";
 
 
-contract Calendar is Ownable {
+contract Calendar is Ownable, Initializable {
 
     enum Day {
         MONDAY,
@@ -36,7 +37,7 @@ contract Calendar is Ownable {
         uint256 _meetingDatetime
     );
 
-    constructor(
+    function initialize(
         int8 _timezone,
         string memory _emailAddress,
         address _newOwner,
@@ -44,7 +45,7 @@ contract Calendar is Ownable {
         uint256 _availableStartTime,
         uint256 _availableEndTime,
         uint256 _duration
-    )
+    ) external initializer
     {
         timezone = _timezone;
         emailAddress = _emailAddress;
