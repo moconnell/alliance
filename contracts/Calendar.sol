@@ -87,14 +87,4 @@ contract Calendar is Ownable, Initializable {
         emit MeetingCancelled(msg.sender, _datetime);
     }
 
-    function withdraw() external {
-        address beneficiary = owner();
-        uint256 balance = address(this).balance;
-        (bool success, bytes memory returnData) = beneficiary.call{
-            value: balance
-        }("");
-        require(success, string(returnData));
-    }
-
-    receive () external payable { }
 }
