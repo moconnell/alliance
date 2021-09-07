@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.3;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@quant-finance/solidity-datetime/contracts/DateTime.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "./DateTime.sol";
 
-contract Calendar is Ownable {
-    using SafeMath for uint256;
+
+contract Calendar is Ownable, Initializable {
 
     enum Day {
         MONDAY,
@@ -37,7 +37,7 @@ contract Calendar is Ownable {
         uint256 _meetingDatetime
     );
 
-    constructor(
+    function initialize(
         int8 _timezone,
         string memory _emailAddress,
         address _newOwner,
@@ -45,7 +45,7 @@ contract Calendar is Ownable {
         uint256 _availableStartTime,
         uint256 _availableEndTime,
         uint256 _duration
-    )
+    ) external initializer
     {
         timezone = _timezone;
         emailAddress = _emailAddress;
@@ -87,14 +87,4 @@ contract Calendar is Ownable {
         emit MeetingCancelled(msg.sender, _datetime);
     }
 
-    function withdraw() external {
-        address beneficiary = owner();
-        uint256 balance = address(this).balance;
-        (bool success, bytes memory returnData) = beneficiary.call{
-            value: balance
-        }("");
-        require(success, string(returnData));
-    }
-
-    receive () external payable { }
 }
