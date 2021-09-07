@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "./DateTime.sol";
 
 
-contract Calendar is Ownable, Initializable {
+contract Calendar is Initializable {
+    address owner;
 
     enum Day {
         MONDAY,
@@ -19,7 +19,7 @@ contract Calendar is Ownable, Initializable {
     }
 
     int8 public timezone;
-    string private emailAddress;
+    string public emailAddress;
     mapping(Day => bool) public availableDays;
     uint256 public availableStartTime;
     uint256 public availableEndTime;
@@ -40,7 +40,7 @@ contract Calendar is Ownable, Initializable {
     function initialize(
         int8 _timezone,
         string memory _emailAddress,
-        address _newOwner,
+        address _owner,
         Day[] memory _availableDays,
         uint256 _availableStartTime,
         uint256 _availableEndTime,
@@ -49,6 +49,7 @@ contract Calendar is Ownable, Initializable {
     {
         timezone = _timezone;
         emailAddress = _emailAddress;
+        owner = _owner;
 
         for (uint i = 0; i < _availableDays.length; i++) {
             availableDays[_availableDays[i]] = true;
@@ -57,8 +58,6 @@ contract Calendar is Ownable, Initializable {
         availableStartTime = _availableStartTime;
         availableEndTime = _availableEndTime;
         duration = _duration;
-
-        transferOwnership(_newOwner);
     }
 
     function bookMeeting(uint256 _datetime) external {
