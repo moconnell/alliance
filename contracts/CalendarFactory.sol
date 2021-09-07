@@ -22,7 +22,6 @@ contract CalendarFactory {
     function createCalendar(
         int8 _timezone,
         string memory _emailAddress,
-        address _newOwner,
         Calendar.Day[] memory _availableDays,
         uint256 _availableStartTime,
         uint256 _availableEndTime,
@@ -34,7 +33,7 @@ contract CalendarFactory {
         Calendar(clone).initialize(
             _timezone,
             _emailAddress,
-            _newOwner,
+            msg.sender,
             _availableDays,
             _availableStartTime,
             _availableEndTime,
