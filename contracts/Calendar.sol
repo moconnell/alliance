@@ -29,12 +29,12 @@ contract Calendar is Initializable {
 
     event MeetingBooked(
         address indexed _attendee,
-        uint256 _meetingDatetime
+        uint256 _meetingTimestamp
     );
 
     event MeetingCancelled(
         address indexed _attendee,
-        uint256 _meetingDatetime
+        uint256 _meetingTimestamp
     );
 
     function initialize(
@@ -60,30 +60,30 @@ contract Calendar is Initializable {
         duration = _duration;
     }
 
-    function bookMeeting(uint256 _datetime) external {
-        (, , , uint256 hr, uint256 min, ) = DateTime.timestampToDateTime(_datetime);
+    function bookMeeting(uint256 _timestamp) external {
+        (, , , uint256 hr, uint256 min, ) = DateTime.timestampToDateTime(_timestamp);
         uint256 formattedTime = (hr * 100) + min;
         require(formattedTime >= availableStartTime, "bookMeeting::cant book before start time.");
         require(formattedTime < availableEndTime, "bookMeeting::cant book after end time.");
-        require(meetingSchedule[_datetime] == address(0), "bookMeeting::time already booked."); 
-        require(_datetime > block.timestamp, "bookMeeting::cant book in past");
+        require(meetingSchedule[_timestamp] == address(0), "bookMeeting::time already booked.");
+        require(_timestamp > block.timestamp, "bookMeeting::cant book in past");
 
         Day day = Day(
-            DateTime.getDayOfWeek(_datetime) - 1
+            DateTime.getDayOfWeek(_timestamp) - 1
         );
 
         require(availableDays[day], "bookMeeting::day unavailable");
 
-        meetingSchedule[_datetime] = msg.sender;
+        meetingSchedule[_timestamp] = msg.sender;
 
-        emit MeetingBooked(msg.sender, _datetime);
+        emit MeetingBooked(msg.sender, _timestamp);
     }
 
-    function cancelMeeting(uint256 _datetime) external {
-        require(meetingSchedule[_datetime] == msg.sender, "cancelMeeting::cant cancel meeting that isnt yours."); 
-        meetingSchedule[_datetime] = address(0);
+    function cancelMeeting(uint256 _timestamp) external {
+        require(meetingSchedule[_timestamp] == msg.sender, "cancelMeeting::cant cancel meeting that isnt yours.");
+        meetingSchedule[_timestamp] = address(0);
 
-        emit MeetingCancelled(msg.sender, _datetime);
+        emit MeetingCancelled(msg.sender, _timestamp);
     }
 
 }
