@@ -19,7 +19,7 @@ contract Calendar is Initializable {
     }
 
     int8 public timezone;
-    string private emailAddress;
+    string public emailAddress;
     mapping(Day => bool) public availableDays;
     uint256 public availableStartTime;
     uint256 public availableEndTime;
