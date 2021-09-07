@@ -14,15 +14,15 @@ describe("CalendarFactory", function () {
         const calendarFactory = await CalendarFactory.deploy();
 
         // Create debate
-        const startTimestamp = 1631021315;
-        const oneHour = 60*60;
-
+        const startTime = 1200; // 12:00
+        const endTime   = 1600; // 16:00
+        const oneHour = 60; // minutes?
         const id = (await calendarFactory.createCalendar(
           0, // timezone UTC
           "test@gmail.com",
           [0,1,2,3,4],
-          startTimestamp,
-          startTimestamp + oneHour*24*5, // 5 days
+          startTime,
+          endTime,
           oneHour
         )).value.toBigInt();
         chai.expect(id).to.equal(BigNumber.from(0));
