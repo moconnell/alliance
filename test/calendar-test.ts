@@ -1,48 +1,97 @@
 import { ethers } from "hardhat";
-import { Contract, BigNumber } from "ethers";
+import {
+  Contract,
+  ContractTransaction,
+  ContractReceipt,
+  BigNumber
+} from "ethers";
 import chai, { expect } from "chai";
 
+const alicesCalendarConfig = {
+  timezone : 0, // UTC+0
+  emailAddress : "alice@mail.com",
+  availableDays : [true, true, true, true, true, false, false],
+  startTime : [9, 30], // 9:30
+  endTime : [16, 30], // 16:30
+}
+
+const bobsCalendarConfig = {
+  timezone : +2, // UTC+2
+  emailAddress : "bob@mail.com",
+  availableDays : [true, true, true, true, true, false, false],
+  startTime : [8, 0], // 8:00
+  endTime : [16, 30], // 16:30
+}
+
 describe("CalendarFactory", function() {
-  let sender: string;
   let calendarLib: Contract;
+  let calendarFactory : Contract;
+  let alicesCalendar: Contract;
+  let bobsCalendar: Contract;
 
   beforeEach(async function() {
-    sender = await (await ethers.getSigners())[0].getAddress();
+    const [alice, bob] = await ethers.getSigners();
+
+    // deploy CalendarLib
     const CalendarLib = await ethers.getContractFactory("CalendarLib");
     calendarLib = await CalendarLib.deploy();
-  });
 
-
-  it("Calendar initialization", async function() {
-
+    // deploy CalendarFactory
     const CalendarFactory = await ethers.getContractFactory("CalendarFactory", {
       libraries: {
         CalendarLib: calendarLib.address
-      }
-    });
-    const calendarFactory = await CalendarFactory.deploy();
+      } });
+    calendarFactory = await CalendarFactory.deploy();
 
-    // Create debate
-    const timezone = 0; // timezone UTC
-    const emailAddress = "test@gmail.com";
-    const availableDays = [true, true, true, true, true, false, false];
-    const startTime = [12, 30]; // 12:30
-    const endTime = [16, 30]; // 16:30
+    // deploy alice's calendar
+    let alicesTx: ContractTransaction = await calendarFactory.connect(alice).createCalendar(...Object.values(alicesCalendarConfig))
+    let alicesReceipt: ContractReceipt = await alicesTx.wait();
+    const aliceEvent = alicesReceipt.events?.[0]?.args;
+    let alicesAddress = aliceEvent?.userAddress;
+    let alicesCalendarAddress = aliceEvent?.calenderAddress;
+    let alicesCalendarId = aliceEvent?.id;
 
-    const id = (await calendarFactory.createCalendar(
-      timezone,
-      emailAddress,
-      availableDays,
-      startTime,
-      endTime
-    )).value.toBigInt();
-    chai.expect(id).to.equal(BigNumber.from(0));
+    chai.expect(alicesAddress).to.equal(alice.address);
+    const alicesCalendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(alicesCalendarId);
+    chai.expect(alicesCalendarAddress).to.equal(alicesCalendarAddressFromMapping);
+    chai.expect(alicesCalendarId).to.equal(BigNumber.from(0));
 
-    const calendar_addr = await calendarFactory.calendarIdToCalendar(id);
-    const calendar = await ethers.getContractAt("Calendar", calendar_addr);
+    alicesCalendar = await ethers.getContractAt("Calendar", alicesCalendarAddress);
 
-    chai.expect(await calendar.timezone()).to.equal(0);
-    chai.expect(await calendar.emailAddress()).to.equal("test@gmail.com");
+    // deploy bobs calendar
+    let bobsTx: ContractTransaction = await calendarFactory.connect(bob).createCalendar(...Object.values(bobsCalendarConfig))
+    let bobsReceipt: ContractReceipt = await bobsTx.wait();
+    const bobEvent = bobsReceipt.events?.[0]?.args;
+    let bobsAddress = bobEvent?.userAddress;
+    let bobsCalendarAddress = bobEvent?.calenderAddress;
+    let bobsCalendarId = bobEvent?.id;
+
+    chai.expect(bobsAddress).to.equal(bob.address);
+    const bobsCalendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(bobsCalendarId);
+    chai.expect(bobsCalendarAddress).to.equal(bobsCalendarAddressFromMapping);
+
+    chai.expect(bobsCalendarId).to.equal(BigNumber.from(1));
+
+    bobsCalendar = await ethers.getContractAt("Calendar", bobsCalendarAddress);
+
   });
+
+  it("should initialize calendars correctly", async function() {
+    chai.expect(await alicesCalendar.timezone()).to.equal(alicesCalendarConfig.timezone);
+    chai.expect(await bobsCalendar.timezone()).to.equal(bobsCalendarConfig.timezone);
+  });
+
+
+});
+
+describe("Calendar", function() {
+  it("book meeting", async function() {
+    chai.expect(true).to.equal(false)
+  });
+
+  it("cancel meeting", async function() {
+    chai.expect(true).to.equal(false)
+  });
+
 });
 

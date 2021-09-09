@@ -62,7 +62,7 @@ library CalendarLib {
         } else return false;
     }
 
-    function isInbetween(Time calldata time, Time calldata a, Time calldata b) public view returns (bool){
+    function isInbetween(Time calldata time, Time calldata a, Time calldata b) public pure returns (bool){
         return isLess(a, time) && isLess(time, b);
     }
 

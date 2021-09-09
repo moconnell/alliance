@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./Calendar.sol";
+import "hardhat/console.sol";
 
 contract CalendarFactory {
 
@@ -13,8 +14,9 @@ contract CalendarFactory {
     uint256 public calendarCount = 0;
 
     event CalendarCreated(
-        address indexed _user,
-        address _calAddr
+        address indexed userAddress,
+        address indexed calenderAddress,
+        uint256 id
     );
 
     constructor() {
@@ -48,7 +50,7 @@ contract CalendarFactory {
         calendarIdToCalendar[id] = clone;
         userToCalendarIds[msg.sender].push(id);
 
-        emit CalendarCreated(msg.sender, clone);
+        emit CalendarCreated(msg.sender, clone, id);
 
         return id;
     }
