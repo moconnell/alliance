@@ -47,19 +47,18 @@ contract Calendar is CalendarStorage, Initializable {
         CalendarLib.Time calldata _start,
         CalendarLib.Time calldata _end
     ) external {
-        require(CalendarLib.isLess(_start,_end), "The time of start must be earlier than the end.");
+        require(CalendarLib.isLess(_start, _end), "The time of start must be earlier than the end.");
 
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
         require(CalendarLib.isInbetween(_start, availableStart, availableEnd)
-             && CalendarLib.isInbetween(_end, availableStart, availableEnd) , "Time not available.");
+            && CalendarLib.isInbetween(_end, availableStart, availableEnd), "Time not available.");
 
         uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 59);
         require(timestamp > block.timestamp, "Cant book in past");
         require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
-        // TODO What if event spans two days e.g. start 23:30, end 00:30?
 
         // Compare existing events for collisions
-        for (uint i=0; i<dateToMeetings[_year][_month][_day].length; i++) {
+        for (uint i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
 
             // Require the new meeting to have no overlap with meeting i
             if (!CalendarLib.isGreaterOrEqual(_start, dateToMeetings[_year][_month][_day][i].end)) {   //          |s..e| <= |s'..
@@ -71,11 +70,7 @@ contract Calendar is CalendarStorage, Initializable {
 
         //No time collision
         dateToMeetings[_year][_month][_day].push(
-            CalendarLib.Meeting({
-                attendee: msg.sender,
-                start: _start,
-                end: _end
-            })
+            CalendarLib.Meeting({attendee : msg.sender, start : _start, end : _end})
         );
 
         emit CalendarLib.MeetingBooked(
@@ -93,23 +88,26 @@ contract Calendar is CalendarStorage, Initializable {
         CalendarLib.Time calldata _end
     ) external {
 
-        uint length = dateToMeetings[_year][_month][_day].length;
-        for (uint i=0; i<length; i++) {
-            require(CalendarLib.isEqual(_start, dateToMeetings[_year][_month][_day][i].start)
-                 && CalendarLib.isEqual(_end, dateToMeetings[_year][_month][_day][i].end),
-                 "Meeting not found."
-            );
+        // search for the meeting position in the meetings array
+        uint256 i = 0;
+        uint256 length = dateToMeetings[_year][_month][_day].length;
+        while (i < length) {
 
-            // remove element by overwriting it with the last element
-            dateToMeetings[_year][_month][_day][i] =  dateToMeetings[_year][_month][_day][length-1];
-            dateToMeetings[_year][_month][_day].pop();
-
-            emit CalendarLib.MeetingCancelled(
-                msg.sender, _year, _month, _day,
-                _start.hour, _start.minute,
-                _end.hour, _end.minute
-            );
-            return;
+            if (msg.sender == dateToMeetings[_year][_month][_day][i].attendee
+            && CalendarLib.isEqual(_start, dateToMeetings[_year][_month][_day][i].start)
+            && CalendarLib.isEqual(_end, dateToMeetings[_year][_month][_day][i].end)
+            ) {
+                break;
+            }
+            i++;
         }
+
+        require(i != length, "Meeting not found.");
+
+        // remove element by overwriting it with the last element
+        dateToMeetings[_year][_month][_day][i] = dateToMeetings[_year][_month][_day][length - 1];
+        dateToMeetings[_year][_month][_day].pop();
+
+        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, _start.hour, _start.minute, _end.hour, _end.minute);
     }
 }
