@@ -7,6 +7,9 @@
     "test": "npx hardhat test"
   },
   "author": "koloz",
+  "contributors": [
+      "mheuer <> (https://github.com/Michael-A-Heuer/alliance)"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

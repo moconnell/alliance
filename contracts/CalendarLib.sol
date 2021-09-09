@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library Clock {
+library CalendarLib {
+    struct Meeting {
+        address attendee;   // 32 bytes
+        Time start;         // 2 bytes
+        Time end;           // 2 bytes
+    }
+
     struct Time {
         uint8 hour;     // 1 byte
         uint8 minute;   // 1 byte

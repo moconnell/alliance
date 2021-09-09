@@ -4,12 +4,12 @@ import chai, { expect } from "chai";
 
 describe("CalendarFactory", function() {
   let sender: string;
-  let clockLib: Contract;
+  let calendarLib: Contract;
 
   beforeEach(async function() {
     sender = await (await ethers.getSigners())[0].getAddress();
-    const ClockLib = await ethers.getContractFactory("Clock");
-    clockLib = await ClockLib.deploy();
+    const CalendarLib = await ethers.getContractFactory("CalendarLib");
+    calendarLib = await CalendarLib.deploy();
   });
 
 
@@ -17,7 +17,7 @@ describe("CalendarFactory", function() {
 
     const CalendarFactory = await ethers.getContractFactory("CalendarFactory", {
       libraries: {
-        Clock: clockLib.address
+        CalendarLib: calendarLib.address
       }
     });
     const calendarFactory = await CalendarFactory.deploy();

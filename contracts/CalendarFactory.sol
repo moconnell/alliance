@@ -25,10 +25,11 @@ contract CalendarFactory {
         int8 _timezone,
         string memory _emailAddress,
         bool[7] memory _availableDays,
-        Clock.Time calldata _availableStartTime,
-        Clock.Time calldata _availableEndTime
+        CalendarLib.Time calldata _availableStartTime,
+        CalendarLib.Time calldata _availableEndTime
     ) external returns (uint256){
-        require(Clock.isLess(_availableStartTime, _availableEndTime), "The time of start must be earlier than the end.");
+        require(CalendarLib.isLess(_availableStartTime, _availableEndTime),
+            "The time of start must be earlier than the end.");
 
         address clone = Clones.clone(calendarImplementation);
 
