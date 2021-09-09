@@ -3,16 +3,20 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./Calendar.sol";
+import "hardhat/console.sol";
 
 contract CalendarFactory {
-    mapping(address => address[]) public userToCalendars;
-    mapping(address => uint256) public userToNumCalendars;
+
+    mapping(address => uint256[]) public userToCalendarIds;
+    mapping(uint256 => address) public calendarIdToCalendar;
 
     address calendarImplementation;
+    uint256 public calendarCount = 0;
 
     event CalendarCreated(
-        address indexed _user,
-        address _calAddr
+        address indexed userAddress,
+        address indexed calenderAddress,
+        uint256 id
     );
 
     constructor() {
@@ -22,28 +26,32 @@ contract CalendarFactory {
     function createCalendar(
         int8 _timezone,
         string memory _emailAddress,
-        address _newOwner,
-        Calendar.Day[] memory _availableDays,
-        uint256 _availableStartTime,
-        uint256 _availableEndTime,
-        uint256 _duration
-    ) external {
+        bool[7] memory _availableDays,
+        CalendarLib.Time calldata _availableStartTime,
+        CalendarLib.Time calldata _availableEndTime
+    ) external returns (uint256){
+        require(CalendarLib.isLess(_availableStartTime, _availableEndTime),
+            "The time of start must be earlier than the end.");
 
         address clone = Clones.clone(calendarImplementation);
 
         Calendar(clone).initialize(
+            msg.sender,
             _timezone,
             _emailAddress,
-            _newOwner,
             _availableDays,
             _availableStartTime,
-            _availableEndTime,
-            _duration
+            _availableEndTime
         );
 
-        userToNumCalendars[msg.sender] += 1;
-        userToCalendars[msg.sender].push(clone);
+        uint256 id = calendarCount;
+        calendarCount++;
 
-        emit CalendarCreated(msg.sender, clone);
+        calendarIdToCalendar[id] = clone;
+        userToCalendarIds[msg.sender].push(id);
+
+        emit CalendarCreated(msg.sender, clone, id);
+
+        return id;
     }
 }
