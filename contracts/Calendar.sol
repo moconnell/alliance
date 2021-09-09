@@ -2,88 +2,150 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Clock.sol";
 import "./DateTime.sol";
 
-
 contract Calendar is Initializable {
+
+    struct Meeting {
+        address attendee;   // 32 bytes
+        Clock.Time start;         // 2 bytes
+        Clock.Time end;           // 2 bytes
+    }
+
     address owner;
 
-    enum Day {
-        MONDAY,
-        TUESDAY,
-        WEDNESDAY,
-        THURSDAY,
-        FRIDAY,
-        SATURDAY,
-        SUNDAY
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Caller is not the owner");
+        _;
     }
 
     int8 public timezone;
     string public emailAddress;
-    mapping(Day => bool) public availableDays;
-    uint256 public availableStartTime;
-    uint256 public availableEndTime;
-    uint256 public duration;
+    bool[7] public availableDays;
+    Clock.Time public availableStart;
+    Clock.Time public availableEnd;
 
-    mapping(uint256 => address) public meetingSchedule;
+    mapping(uint256 => // year
+        mapping(uint256 => // month
+            mapping(uint256 => // day
+                Meeting[]
+            )
+        )
+    ) public dateToMeetings;
 
     event MeetingBooked(
         address indexed _attendee,
-        uint256 _meetingTimestamp
+        uint256 year, uint256 month, uint256 day,
+        uint256 startHour, uint256 startMinute,
+        uint256 endHour, uint256 endMinute
     );
 
     event MeetingCancelled(
         address indexed _attendee,
-        uint256 _meetingTimestamp
+        uint256 year, uint256 month, uint256 day,
+        uint256 startHour, uint256 startMinute,
+        uint256 endHour, uint256 endMinute
     );
 
     function initialize(
+        address _owner,
         int8 _timezone,
         string memory _emailAddress,
-        address _owner,
-        Day[] memory _availableDays,
-        uint256 _availableStartTime,
-        uint256 _availableEndTime,
-        uint256 _duration
+        bool[7] memory _availableDays,
+        Clock.Time calldata _availableStartTime,
+        Clock.Time calldata _availableEndTime
     ) external initializer
     {
+        owner = _owner;
         timezone = _timezone;
         emailAddress = _emailAddress;
-        owner = _owner;
+        availableDays = _availableDays;
+        availableStart = _availableStartTime;
+        availableEnd = _availableEndTime;
+    }
 
-        for (uint i = 0; i < _availableDays.length; i++) {
-            availableDays[_availableDays[i]] = true;
+    function setAvailableDays(bool[7] memory _availableDays) external onlyOwner {
+        availableDays = _availableDays;
+    }
+
+    function changeAvailableTimes(Clock.Time calldata _start, Clock.Time calldata _end) external onlyOwner {
+        require(Clock.isLess(_start, _end), "The start must be earlier than the end.");
+        availableStart = _start;
+        availableEnd = _end;
+    }
+
+    function bookMeeting(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day,
+        Clock.Time calldata _start,
+        Clock.Time calldata _end
+    ) external {
+        require(Clock.isLess(_start,_end), "The time of start must be earlier than the end.");
+
+        require(msg.sender != owner, "You cannot book a meeting with yourself.");
+        require(Clock.isInbetween(_start, availableStart, availableEnd)
+             && Clock.isInbetween(_end, availableStart, availableEnd) , "Time not available.");
+
+        uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 59);
+        require(timestamp > block.timestamp, "Cant book in past");
+        require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
+        // TODO What if event spans two days e.g. start 23:30, end 00:30?
+
+        // Compare existing events for collisions
+        for (uint i=0; i<dateToMeetings[_year][_month][_day].length; i++) {
+
+            // Require the new meeting to have no overlap with meeting i
+            if (!Clock.isGreaterOrEqual(_start, dateToMeetings[_year][_month][_day][i].end)) {   //          |s..e| <= |s'..
+                require(Clock.isLessOrEqual(_end, dateToMeetings[_year][_month][_day][i].start), // ..e'| <= |s..e|
+                    "Overlap with existing event."
+                );
+            }
         }
 
-        availableStartTime = _availableStartTime;
-        availableEndTime = _availableEndTime;
-        duration = _duration;
-    }
-
-    function bookMeeting(uint256 _timestamp) external {
-        (, , , uint256 hr, uint256 min, ) = DateTime.timestampToDateTime(_timestamp);
-        uint256 formattedTime = (hr * 100) + min;
-        require(formattedTime >= availableStartTime, "bookMeeting::cant book before start time.");
-        require(formattedTime < availableEndTime, "bookMeeting::cant book after end time.");
-        require(meetingSchedule[_timestamp] == address(0), "bookMeeting::time already booked.");
-        require(_timestamp > block.timestamp, "bookMeeting::cant book in past");
-
-        Day day = Day(
-            DateTime.getDayOfWeek(_timestamp) - 1
+        //No time collision
+        dateToMeetings[_year][_month][_day].push(
+            Meeting({
+                attendee: msg.sender,
+                start: _start,
+                end: _end
+            })
         );
 
-        require(availableDays[day], "bookMeeting::day unavailable");
-
-        meetingSchedule[_timestamp] = msg.sender;
-
-        emit MeetingBooked(msg.sender, _timestamp);
+        emit MeetingBooked(
+            msg.sender, _year, _month, _day,
+            _start.hour, _start.minute,
+            _end.hour, _end.minute
+        );
     }
 
-    function cancelMeeting(uint256 _timestamp) external {
-        require(meetingSchedule[_timestamp] == msg.sender, "cancelMeeting::cant cancel meeting that isnt yours.");
-        meetingSchedule[_timestamp] = address(0);
+    function cancelMeeting(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day,
+        Clock.Time calldata _start,
+        Clock.Time calldata _end
+    ) external {
 
-        emit MeetingCancelled(msg.sender, _timestamp);
+        uint length = dateToMeetings[_year][_month][_day].length;
+        for (uint i=0; i<length; i++) {
+            require(Clock.isEqual(_start, dateToMeetings[_year][_month][_day][i].start)
+                 && Clock.isEqual(_end, dateToMeetings[_year][_month][_day][i].end),
+                 "Meeting not found."
+            );
+
+            // remove element by overwriting it with the last element
+            dateToMeetings[_year][_month][_day][i] =  dateToMeetings[_year][_month][_day][length-1];
+            dateToMeetings[_year][_month][_day].pop();
+
+            emit MeetingCancelled(
+                msg.sender, _year, _month, _day,
+                _start.hour, _start.minute,
+                _end.hour, _end.minute
+            );
+            return;
+        }
     }
-
 }

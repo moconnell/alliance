@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./Calendar.sol";
 
 contract CalendarFactory {
+
     mapping(address => uint256[]) public userToCalendarIds;
     mapping(uint256 => address) public calendarIdToCalendar;
 
@@ -23,22 +24,21 @@ contract CalendarFactory {
     function createCalendar(
         int8 _timezone,
         string memory _emailAddress,
-        Calendar.Day[] memory _availableDays,
-        uint256 _availableStartTime,
-        uint256 _availableEndTime,
-        uint256 _duration
+        bool[7] memory _availableDays,
+        Clock.Time calldata _availableStartTime,
+        Clock.Time calldata _availableEndTime
     ) external returns (uint256){
+        require(Clock.isLess(_availableStartTime, _availableEndTime), "The time of start must be earlier than the end.");
 
         address clone = Clones.clone(calendarImplementation);
 
         Calendar(clone).initialize(
+            msg.sender,
             _timezone,
             _emailAddress,
-            msg.sender,
             _availableDays,
             _availableStartTime,
-            _availableEndTime,
-            _duration
+            _availableEndTime
         );
 
         uint256 id = calendarCount;
