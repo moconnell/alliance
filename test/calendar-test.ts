@@ -3,7 +3,8 @@ import {
   Contract,
   ContractTransaction,
   ContractReceipt,
-  BigNumber
+  BigNumber,
+  Signer
 } from "ethers";
 import chai, { expect } from "chai";
 
@@ -23,6 +24,7 @@ const bobsCalendarConfig = {
   endTime : [16, 30], // 16:30
 }
 
+
 describe("CalendarFactory", function() {
   let calendarLib: Contract;
   let calendarFactory : Contract;
@@ -30,7 +32,22 @@ describe("CalendarFactory", function() {
   let bobsCalendar: Contract;
 
   beforeEach(async function() {
-    const [alice, bob] = await ethers.getSigners();
+    const [alice, bob]  = await ethers.getSigners();
+
+    async function prepareCalendar(calendarFactory: Contract, signer: Signer, config: Object) {
+      let tx: ContractTransaction = await calendarFactory.connect(signer).createCalendar(...Object.values(config));
+      let receipt: ContractReceipt = await tx.wait();
+      const txEvent = receipt.events?.[0]?.args;
+      let userAddress = txEvent?.userAddress;
+      let calenderAddress = txEvent?.calenderAddress;
+      let id = txEvent?.id;
+
+      chai.expect(userAddress).to.equal(await signer.getAddress());
+      const calendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(id);
+      chai.expect(calenderAddress).to.equal(calendarAddressFromMapping);
+
+      return [await ethers.getContractAt("Calendar", calenderAddress), id];
+    }
 
     // deploy CalendarLib
     const CalendarLib = await ethers.getContractFactory("CalendarLib");
@@ -44,43 +61,20 @@ describe("CalendarFactory", function() {
     calendarFactory = await CalendarFactory.deploy();
 
     // deploy alice's calendar
-    let alicesTx: ContractTransaction = await calendarFactory.connect(alice).createCalendar(...Object.values(alicesCalendarConfig))
-    let alicesReceipt: ContractReceipt = await alicesTx.wait();
-    const aliceEvent = alicesReceipt.events?.[0]?.args;
-    let alicesAddress = aliceEvent?.userAddress;
-    let alicesCalendarAddress = aliceEvent?.calenderAddress;
-    let alicesCalendarId = aliceEvent?.id;
-
-    chai.expect(alicesAddress).to.equal(alice.address);
-    const alicesCalendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(alicesCalendarId);
-    chai.expect(alicesCalendarAddress).to.equal(alicesCalendarAddressFromMapping);
-    chai.expect(alicesCalendarId).to.equal(BigNumber.from(0));
-
-    alicesCalendar = await ethers.getContractAt("Calendar", alicesCalendarAddress);
+    let alicesCalendarId;
+    [alicesCalendar, alicesCalendarId] = await prepareCalendar(calendarFactory, alice, alicesCalendarConfig);
+    chai.expect(alicesCalendarId).to.equal(0);
 
     // deploy bobs calendar
-    let bobsTx: ContractTransaction = await calendarFactory.connect(bob).createCalendar(...Object.values(bobsCalendarConfig))
-    let bobsReceipt: ContractReceipt = await bobsTx.wait();
-    const bobEvent = bobsReceipt.events?.[0]?.args;
-    let bobsAddress = bobEvent?.userAddress;
-    let bobsCalendarAddress = bobEvent?.calenderAddress;
-    let bobsCalendarId = bobEvent?.id;
-
-    chai.expect(bobsAddress).to.equal(bob.address);
-    const bobsCalendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(bobsCalendarId);
-    chai.expect(bobsCalendarAddress).to.equal(bobsCalendarAddressFromMapping);
-
-    chai.expect(bobsCalendarId).to.equal(BigNumber.from(1));
-
-    bobsCalendar = await ethers.getContractAt("Calendar", bobsCalendarAddress);
-
+    let bobsCalendarId;
+    [bobsCalendar, bobsCalendarId] = await prepareCalendar(calendarFactory, bob, bobsCalendarConfig);
+    chai.expect(bobsCalendarId).to.equal(1);
   });
 
   it("should initialize calendars correctly", async function() {
     chai.expect(await alicesCalendar.timezone()).to.equal(alicesCalendarConfig.timezone);
     chai.expect(await bobsCalendar.timezone()).to.equal(bobsCalendarConfig.timezone);
   });
-
 
 });
 
