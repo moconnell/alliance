@@ -8,6 +8,20 @@ library CalendarLib {
         Time end;           // 2 bytes
     }
 
+    event MeetingBooked(
+        address indexed _attendee,
+        uint256 year, uint256 month, uint256 day,
+        uint256 startHour, uint256 startMinute,
+        uint256 endHour, uint256 endMinute
+    );
+
+    event MeetingCancelled(
+        address indexed _attendee,
+        uint256 year, uint256 month, uint256 day,
+        uint256 startHour, uint256 startMinute,
+        uint256 endHour, uint256 endMinute
+    );
+
     struct Time {
         uint8 hour;     // 1 byte
         uint8 minute;   // 1 byte

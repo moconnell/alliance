@@ -2,46 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./CalendarStorage.sol";
 import "./CalendarLib.sol";
 import "./DateTime.sol";
 
-contract Calendar is Initializable {
-    
-    address owner;
 
+contract Calendar is CalendarStorage, Initializable {
     modifier onlyOwner() {
-        require(owner == msg.sender, "Caller is not the owner");
+        require(owner == msg.sender, "Caller is not the owner.");
         _;
     }
-
-    int8 public timezone;
-    string public emailAddress;
-    bool[7] public availableDays;
-    CalendarLib.Time public availableStart;
-    CalendarLib.Time public availableEnd;
-
-    mapping(uint256 => // year
-        mapping(uint256 => // month
-            mapping(uint256 => // day
-                CalendarLib.Meeting[]
-            )
-        )
-    ) public dateToMeetings;
-
-    event MeetingBooked(
-        address indexed _attendee,
-        uint256 year, uint256 month, uint256 day,
-        uint256 startHour, uint256 startMinute,
-        uint256 endHour, uint256 endMinute
-    );
-
-    event MeetingCancelled(
-        address indexed _attendee,
-        uint256 year, uint256 month, uint256 day,
-        uint256 startHour, uint256 startMinute,
-        uint256 endHour, uint256 endMinute
-    );
 
     function initialize(
         address _owner,
@@ -108,7 +78,7 @@ contract Calendar is Initializable {
             })
         );
 
-        emit MeetingBooked(
+        emit CalendarLib.MeetingBooked(
             msg.sender, _year, _month, _day,
             _start.hour, _start.minute,
             _end.hour, _end.minute
@@ -134,7 +104,7 @@ contract Calendar is Initializable {
             dateToMeetings[_year][_month][_day][i] =  dateToMeetings[_year][_month][_day][length-1];
             dateToMeetings[_year][_month][_day].pop();
 
-            emit MeetingCancelled(
+            emit CalendarLib.MeetingCancelled(
                 msg.sender, _year, _month, _day,
                 _start.hour, _start.minute,
                 _end.hour, _end.minute
