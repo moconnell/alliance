@@ -80,6 +80,14 @@ contract Calendar is CalendarStorage, Initializable {
         );
     }
 
+    function getMeetings(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day
+    ) public view returns (CalendarLib.Meeting[] memory) {
+        return dateToMeetings[_year][_month][_day];
+    }
+
     function cancelMeeting(
         uint256 _year,
         uint256 _month,

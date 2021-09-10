@@ -38,7 +38,7 @@ library CalendarLib {
             return a.minute > b.minute;
         } else return false;
     }
-    
+
     function isGreaterOrEqual(Time calldata a, Time calldata b) public pure returns (bool){
         if (a.hour >= b.hour) {
             return true;
