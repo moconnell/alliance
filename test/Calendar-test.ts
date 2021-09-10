@@ -3,7 +3,7 @@ import { Contract, Signer } from "ethers";
 import chai from "chai";
 import {
   cal1Config, cal2Config,
-  prepareCalendarFactory, prepareCalendar
+  deployCalendarFactory, deployCalendar
 } from "./helpers";
 
 describe("Calendar", function() {
@@ -15,9 +15,9 @@ describe("Calendar", function() {
 
   beforeEach(async function() {
     [signer1, signer2] = await ethers.getSigners();
-    [calendarFactory] = await prepareCalendarFactory(signer1);
-    [cal1] = await prepareCalendar(calendarFactory, signer1, cal1Config);
-    [cal2] = await prepareCalendar(calendarFactory, signer2, cal2Config);
+    [calendarFactory] = await deployCalendarFactory(signer1);
+    [cal1] = await deployCalendar(calendarFactory, signer1, cal1Config);
+    [cal2] = await deployCalendar(calendarFactory, signer2, cal2Config);
   });
 
   it("books meetings with others within the available hours", async function() {

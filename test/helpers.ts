@@ -20,7 +20,7 @@ const cal2Config = {
   endTime : [16, 30], // 16:30 UTC
 }
 
-async function prepareCalendarFactory(deployer: Signer) {
+async function deployCalendarFactory(deployer: Signer) {
   // deploy CalendarLib
   const CalendarLib = await ethers.getContractFactory("CalendarLib");
   let calendarLib = await CalendarLib.deploy();
@@ -34,7 +34,7 @@ async function prepareCalendarFactory(deployer: Signer) {
   return [await CalendarFactory.deploy(), calendarLib];
 }
 
-async function prepareCalendar(calendarFactory: Contract, signer: Signer, config: Object) {
+async function deployCalendar(calendarFactory: Contract, signer: Signer, config: Object) {
 
   let tx: ContractTransaction = await calendarFactory.connect(signer).createCalendar(
     ...Object.values(config)
@@ -55,6 +55,6 @@ async function prepareCalendar(calendarFactory: Contract, signer: Signer, config
 export {
   cal1Config,
   cal2Config,
-  prepareCalendarFactory,
-  prepareCalendar
+  deployCalendarFactory,
+  deployCalendar
 }
