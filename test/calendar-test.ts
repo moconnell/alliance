@@ -60,21 +60,22 @@ describe("CalendarFactory", function() {
   let calendarFactory: Contract;
   let cal1: Contract;
   let cal2: Contract;
-  let alice: Signer, bob: Signer;
+  let signer1: Signer;
+  let signer2: Signer;
 
   beforeEach(async function() {
-    [alice, bob]  = await ethers.getSigners();
+    [signer1, signer2]  = await ethers.getSigners();
 
-    [calendarFactory] = await prepareCalendarFactory(alice);
+    [calendarFactory] = await prepareCalendarFactory(signer1);
 
     // deploy alice's calendar
     let cal1Id;
-    [cal1, cal1Id] = await prepareCalendar(calendarFactory, alice, alicesCalendarConfig);
+    [cal1, cal1Id] = await prepareCalendar(calendarFactory, signer1, alicesCalendarConfig);
     chai.expect(cal1Id).to.equal(0);
 
     // deploy bobs calendar
     let cal2Id;
-    [cal2, cal2Id] = await prepareCalendar(calendarFactory, bob, bobsCalendarConfig);
+    [cal2, cal2Id] = await prepareCalendar(calendarFactory, signer2, bobsCalendarConfig);
     chai.expect(cal2Id).to.equal(1);
 
   });
@@ -88,6 +89,7 @@ describe("CalendarFactory", function() {
 
 describe("Calendar", function() {
   it("book meeting", async function() {
+
     chai.expect(true).to.equal(false)
   });
 
