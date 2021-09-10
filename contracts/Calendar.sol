@@ -88,63 +88,28 @@ contract Calendar is CalendarStorage, Initializable {
         return dateToMeetings[_year][_month][_day];
     }
 
-
     function cancelMeeting(
         uint256 _year,
         uint256 _month,
         uint256 _day,
-        uint256 _id
+        uint256 _arrayPosition
     ) external {
         // search for the meeting position in the meetings array
         uint256 length = dateToMeetings[_year][_month][_day].length;
 
-        require(_id < length, "Meeting does not exist.");
+        require(_arrayPosition < length, "Meeting does not exist.");
 
-        require(msg.sender == dateToMeetings[_year][_month][_day][_id].attendee,
+        require(msg.sender == dateToMeetings[_year][_month][_day][_arrayPosition].attendee,
             "You cannot cancel a meeting that you have not booked yourself.");
 
         // only to emit event
-        CalendarLib.Time memory start = dateToMeetings[_year][_month][_day][_id].start;
-        CalendarLib.Time memory end = dateToMeetings[_year][_month][_day][_id].end;
+        CalendarLib.Time memory start = dateToMeetings[_year][_month][_day][_arrayPosition].start;
+        CalendarLib.Time memory end = dateToMeetings[_year][_month][_day][_arrayPosition].end;
 
         // remove element by overwriting it with the last element
-        dateToMeetings[_year][_month][_day][_id] = dateToMeetings[_year][_month][_day][length - 1];
+        dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][_month][_day][length - 1];
         dateToMeetings[_year][_month][_day].pop();
 
         emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, start.hour, start.minute, end.hour, end.minute);
-    }
-
-    function cancelMeetingByTime(
-        uint256 _year,
-        uint256 _month,
-        uint256 _day,
-        CalendarLib.Time calldata _start,
-        CalendarLib.Time calldata _end
-    ) external {
-
-        // search for the meeting position in the meetings array
-        uint256 i = 0;
-        uint256 length = dateToMeetings[_year][_month][_day].length;
-        while (i < length) {
-
-            if (msg.sender == dateToMeetings[_year][_month][_day][i].attendee
-            && CalendarLib.isEqual(_start, dateToMeetings[_year][_month][_day][i].start)
-            && CalendarLib.isEqual(_end, dateToMeetings[_year][_month][_day][i].end)
-            ) {
-                break;
-            }
-            i++;
-        }
-
-        require(i != length, "Meeting not found.");
-        
-        require(msg.sender == dateToMeetings[_year][_month][_day][i].attendee,
-            "You cannot cancel a meeting that you have not booked yourself.");
-
-        // remove element by overwriting it with the last element
-        dateToMeetings[_year][_month][_day][i] = dateToMeetings[_year][_month][_day][length - 1];
-        dateToMeetings[_year][_month][_day].pop();
-
-        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, _start.hour, _start.minute, _end.hour, _end.minute);
     }
 }
