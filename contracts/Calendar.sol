@@ -48,11 +48,13 @@ contract Calendar is CalendarStorage, Initializable {
         require(CalendarLib.isLess(_start, _end), "The time of start must be earlier than the end.");
 
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
+
         require(CalendarLib.isInbetween(_start, availableStart, availableEnd)
             && CalendarLib.isInbetween(_end, availableStart, availableEnd), "Time not available.");
 
         uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 59);
         require(timestamp > block.timestamp, "Cant book in past");
+
         require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
 
         // Compare existing events for collisions
@@ -86,7 +88,33 @@ contract Calendar is CalendarStorage, Initializable {
         return dateToMeetings[_year][_month][_day];
     }
 
+
     function cancelMeeting(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day,
+        uint256 _id
+    ) external {
+        // search for the meeting position in the meetings array
+        uint256 length = dateToMeetings[_year][_month][_day].length;
+
+        require(_id < length, "Meeting does not exist.");
+
+        require(msg.sender == dateToMeetings[_year][_month][_day][_id].attendee,
+            "You cannot cancel a meeting that you have not booked yourself.");
+
+        // only to emit event
+        CalendarLib.Time memory start = dateToMeetings[_year][_month][_day][_id].start;
+        CalendarLib.Time memory end = dateToMeetings[_year][_month][_day][_id].end;
+
+        // remove element by overwriting it with the last element
+        dateToMeetings[_year][_month][_day][_id] = dateToMeetings[_year][_month][_day][length - 1];
+        dateToMeetings[_year][_month][_day].pop();
+
+        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, start.hour, start.minute, end.hour, end.minute);
+    }
+
+    function cancelMeetingByTime(
         uint256 _year,
         uint256 _month,
         uint256 _day,
