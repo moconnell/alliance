@@ -24,9 +24,6 @@ describe("CalendarFactory", function() {
     chai.expect(cal1Id).to.equal(0);
     chai.expect(cal2Id).to.equal(1);
 
-    chai.expect(await cal1.timezone()).to.equal(cal1Config.timezone);
-    chai.expect(await cal2.timezone()).to.equal(cal2Config.timezone);
-
     chai.expect(await cal1.emailAddress()).to.equal(cal1Config.emailAddress);
     chai.expect(await cal2.emailAddress()).to.equal(cal2Config.emailAddress);
   });

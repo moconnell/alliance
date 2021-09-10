@@ -23,7 +23,6 @@ contract CalendarFactory {
     }
     
     function createCalendar(
-        int8 _timezone,
         string memory _emailAddress,
         bool[7] memory _availableDays,
         CalendarLib.Time calldata _availableStartTime,
@@ -36,7 +35,6 @@ contract CalendarFactory {
 
         Calendar(clone).initialize(
             msg.sender,
-            _timezone,
             _emailAddress,
             _availableDays,
             _availableStartTime,

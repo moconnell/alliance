@@ -15,7 +15,6 @@ contract Calendar is CalendarStorage, Initializable {
 
     function initialize(
         address _owner,
-        int8 _timezone,
         string memory _emailAddress,
         bool[7] memory _availableDays,
         CalendarLib.Time calldata _availableStartTime,
@@ -23,7 +22,6 @@ contract Calendar is CalendarStorage, Initializable {
     ) external initializer
     {
         owner = _owner;
-        timezone = _timezone;
         emailAddress = _emailAddress;
         availableDays = _availableDays;
         availableStart = _availableStartTime;

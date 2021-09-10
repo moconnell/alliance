@@ -12,7 +12,6 @@ contract CalendarStorage {
 
     address public owner;
     string public emailAddress;
-    int8 public timezone;
     bool[7] public availableDays;
     CalendarLib.Time public availableStart;
     CalendarLib.Time public availableEnd;
