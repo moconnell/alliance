@@ -6,7 +6,6 @@ import "./CalendarStorage.sol";
 import "./CalendarLib.sol";
 import "./DateTime.sol";
 
-
 contract Calendar is CalendarStorage, Initializable {
     modifier onlyOwner() {
         require(owner == msg.sender, "Caller is not the owner.");
@@ -53,19 +52,18 @@ contract Calendar is CalendarStorage, Initializable {
             && CalendarLib.isInbetween(_end, availableStart, availableEnd), "Time not available.");
 
         uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 59);
-        require(timestamp > block.timestamp, "Cant book in past");
+        require(timestamp > block.timestamp, "Cannot book meeting in the past");
 
         require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
 
         // Compare existing events for collisions
         for (uint i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
-
-            // Require the new meeting to have no overlap with meeting i
-            if (!CalendarLib.isGreaterOrEqual(_start, dateToMeetings[_year][_month][_day][i].end)) {   //          |s..e| <= |s'..
-                require(CalendarLib.isLessOrEqual(_end, dateToMeetings[_year][_month][_day][i].start), // ..e'| <= |s..e|
-                    "Overlap with existing event."
-                );
-            }
+            CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
+            //TODO check if nested mapping call is more gas efficient than memory struct
+            require(CalendarLib.isLessOrEqual(other.end, _start)
+                || CalendarLib.isLessOrEqual(_end, other.start),
+                "Overlap with existing meeting."
+            );
         }
 
         //No time collision

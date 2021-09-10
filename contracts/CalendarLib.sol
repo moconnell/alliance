@@ -40,7 +40,7 @@ library CalendarLib {
     }
 
     function isGreaterOrEqual(Time calldata a, Time calldata b) public pure returns (bool){
-        if (a.hour >= b.hour) {
+        if (a.hour > b.hour) {
             return true;
         } else if (a.hour == b.hour) {
             return a.minute >= b.minute;
@@ -56,7 +56,7 @@ library CalendarLib {
     }
 
     function isLessOrEqual(Time calldata a, Time calldata b) public pure returns (bool){
-        if (a.hour <= b.hour) {
+        if (a.hour < b.hour) {
             return true;
         } else if (a.hour == b.hour) {
             return a.minute <= b.minute;
@@ -64,9 +64,13 @@ library CalendarLib {
     }
 
     function isInbetween(Time calldata time, Time calldata a, Time calldata b) public pure returns (bool){
-        return isLess(a, time) && isLess(time, b);
+        return isLessOrEqual(a, time) && isLessOrEqual(time, b);
     }
 
+    function isLooselyInbetween(Time calldata time, Time calldata a, Time calldata b) public pure returns (bool){
+        return isLess(a, time) && isLess(time, b);
+    }
+    
     function differenceInMinutes(Time calldata a, Time calldata b) public pure returns (uint256){
         require(isGreater(a, b));
         return (a.hour - b.hour) * 60 + a.minute - b.minute;
