@@ -109,6 +109,9 @@ contract Calendar is CalendarStorage, Initializable {
         }
 
         require(i != length, "Meeting not found.");
+        
+        require(msg.sender == dateToMeetings[_year][_month][_day][i].attendee,
+            "You cannot cancel a meeting that you have not booked yourself.");
 
         // remove element by overwriting it with the last element
         dateToMeetings[_year][_month][_day][i] = dateToMeetings[_year][_month][_day][length - 1];
