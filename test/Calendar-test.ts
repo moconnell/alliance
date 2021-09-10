@@ -8,13 +8,11 @@ import {
 
 describe("Calendar", function() {
   let calendarFactory: Contract;
-  let cal1: Contract;
-  let cal2: Contract;
-  let signer1: Signer;
-  let signer2: Signer;
+  let cal1: Contract, cal2: Contract;
+  let signer1: Signer, signer2: Signer, signer3: Signer;
 
   beforeEach(async function() {
-    [signer1, signer2] = await ethers.getSigners();
+    [signer1, signer2, signer3] = await ethers.getSigners();
     [calendarFactory] = await deployCalendarFactory(signer1);
     [cal1] = await deployCalendar(calendarFactory, signer1, cal1Config);
     [cal2] = await deployCalendar(calendarFactory, signer2, cal2Config);
