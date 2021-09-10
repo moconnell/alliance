@@ -35,7 +35,7 @@ describe("Calendar", function() {
     chai.expect(res1[0].start.slice(0, 2)).to.deep.equal(start1);
     chai.expect(res1[0].end.slice(0, 2)).to.deep.equal(end1);
 
-    const start2 = [15, 30], end2 = [16,0];
+    const start2 = [15, 30], end2 = [16, 0];
     await cal2.connect(signer1).bookMeeting(2021, 12, 31, start2, end2);
     const res2 = await cal2.getMeetings(2021, 12, 31);
     chai.expect(res2).to.be.instanceof(Array);
@@ -75,10 +75,9 @@ describe("Calendar", function() {
   it("prohibits cancelling meetings of others", async function() {
     await cal2.connect(signer1).bookMeeting(2021, 12, 31, [14, 15], [15, 15]);
 
-    let id = 0
+    let id = 0;
     await chai.expect(cal2.connect(signer2).cancelMeeting(2021, 12, 31, id)
     ).to.be.revertedWith("You cannot cancel a meeting that you have not booked yourself.");
-
   });
 
   it("prohibits booking meetings with yourself", async function() {
@@ -86,6 +85,6 @@ describe("Calendar", function() {
       cal2.connect(signer2).bookMeeting(2021, 12, 31, [14, 15], [15, 15])
     ).to.be.revertedWith("You cannot book a meeting with yourself.");
   });
-  
+
 });
 
