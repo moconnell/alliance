@@ -3,9 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "./CalendarStorage.sol";
-import "./CalendarLib.sol";
 import "./DateTime.sol";
-
 
 contract Calendar is CalendarStorage, Initializable {
     modifier onlyOwner() {
@@ -15,99 +13,159 @@ contract Calendar is CalendarStorage, Initializable {
 
     function initialize(
         address _owner,
-        int8 _timezone,
         string memory _emailAddress,
         bool[7] memory _availableDays,
-        CalendarLib.Time calldata _availableStartTime,
-        CalendarLib.Time calldata _availableEndTime
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
+        uint16 _minutesAvailable
     ) external initializer
     {
         owner = _owner;
-        timezone = _timezone;
         emailAddress = _emailAddress;
         availableDays = _availableDays;
-        availableStart = _availableStartTime;
-        availableEnd = _availableEndTime;
+        earliestStartMinute = _availableStartHour*60 + _availableStartMinute;
+        minutesAvailable = _minutesAvailable;
     }
 
     function setAvailableDays(bool[7] memory _availableDays) external onlyOwner {
         availableDays = _availableDays;
     }
 
-    function changeAvailableTimes(CalendarLib.Time calldata _start, CalendarLib.Time calldata _end) external onlyOwner {
-        require(CalendarLib.isLess(_start, _end), "The start must be earlier than the end.");
-        availableStart = _start;
-        availableEnd = _end;
+    function changeAvailableTimes(
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
+        uint16 _durationInMinutes
+    ) external onlyOwner {
+        earliestStartMinute = _availableStartHour * 60 + _availableStartMinute;
+        minutesAvailable = _durationInMinutes;
     }
 
     function bookMeeting(
         uint256 _year,
         uint256 _month,
         uint256 _day,
-        CalendarLib.Time calldata _start,
-        CalendarLib.Time calldata _end
-    ) external {
-        require(CalendarLib.isLess(_start, _end), "The time of start must be earlier than the end.");
-
+        uint16 _hour,
+        uint16 _minute,
+        uint16 _duration
+    ) public {
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
-        require(CalendarLib.isInbetween(_start, availableStart, availableEnd)
-            && CalendarLib.isInbetween(_end, availableStart, availableEnd), "Time not available.");
 
-        uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 59);
-        require(timestamp > block.timestamp, "Cant book in past");
-        require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
+        uint16 startMinute = _hour * 60 + _minute;
+        uint16 endMinute = startMinute + _duration;
 
-        // Compare existing events for collisions
-        for (uint i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
-
-            // Require the new meeting to have no overlap with meeting i
-            if (!CalendarLib.isGreaterOrEqual(_start, dateToMeetings[_year][_month][_day][i].end)) {   //          |s..e| <= |s'..
-                require(CalendarLib.isLessOrEqual(_end, dateToMeetings[_year][_month][_day][i].start), // ..e'| <= |s..e|
-                    "Overlap with existing event."
-                );
-            }
+        if (earliestStartMinute <= startMinute)
+            require(endMinute - earliestStartMinute <= minutesAvailable,
+                "Time not available.");
+        else {// overnight case
+            require(endMinute + 1440 - earliestStartMinute <= minutesAvailable,
+                "Time not available.");
         }
 
-        //No time collision
+        uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _hour, _minute, 0);
+        require(timestamp > block.timestamp, "Cannot book meeting in the past");
+
+        require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
+
+        // Check existing meetings on the day for collisions
+        checkDay(_year, _month, _day, startMinute, _duration);
+
+        uint256 days_ = DateTime._daysFromDate(_year, _month, _day);
+
+        // Check existing meetings on the previous day for collisions
+        checkPrevDay(startMinute, days_);
+
+        // Check existing meetings on the previous day for collisions
+        checkNextDay(endMinute, days_);
+
+        // Add meeting to existing meetings
         dateToMeetings[_year][_month][_day].push(
-            CalendarLib.Meeting({attendee : msg.sender, start : _start, end : _end})
+            Meeting({
+                attendee : msg.sender,
+                hour : _hour,
+                minute : _minute,
+                duration : _duration
+            })
         );
 
-        emit CalendarLib.MeetingBooked(
-            msg.sender, _year, _month, _day,
-            _start.hour, _start.minute,
-            _end.hour, _end.minute
-        );
+        emit MeetingBooked(msg.sender, _year, _month, _day, _hour, _minute, _duration);
+    }
+
+    function checkDay(uint256 _year, uint256 _month, uint256 _day, uint16 _startMinute, uint16 _duration) internal view {
+        // Compare existing meetings on the same day for collisions
+        for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
+            Meeting memory other = dateToMeetings[_year][_month][_day][i];
+
+            uint16 otherStartMinute = other.hour * 60 + other.minute;
+            uint16 otherEndMinute = otherStartMinute + other.duration;
+
+            // check if the other meeting ends before the new meeting starts
+            // or if the new meeting ends before the other meeting starts
+            require(otherEndMinute <= _startMinute
+                || _startMinute + _duration <= otherStartMinute,
+                "Overlap with existing meeting."
+            );
+        }
+    }
+
+    function checkPrevDay(uint16 _startMinute, uint256 days_) internal view {
+        (uint256 prevYear, uint256 prevMonth, uint256 prevDay) = DateTime._daysToDate(days_ - 1);
+
+        for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
+            Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
+
+            uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
+
+            // check if the other meeting ends before the new one starts
+            require(otherEndMinute <= _startMinute,
+                "Overlap with existing meeting on previous day.");
+        }
+    }
+
+    function checkNextDay(uint16 _endMinute, uint256 days_) internal view {
+        (uint256 nextYear, uint256 nextMonth, uint256 nextDay) = DateTime._daysToDate(days_ + 1);
+
+        for (uint256 i = 0; i < dateToMeetings[nextYear][nextMonth][nextDay].length; i++) {
+            Meeting memory other = dateToMeetings[nextYear][nextMonth][nextDay][i];
+
+            uint16 otherStartMinute = other.hour * 60 + other.minute;
+
+            // check if the other meeting ends before the new one starts
+            require(_endMinute <= otherStartMinute,
+                "Overlap with existing meeting on next day.");
+        }
+    }
+
+    function getMeetings(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day
+    ) public view returns (Meeting[] memory) {
+        return dateToMeetings[_year][_month][_day];
     }
 
     function cancelMeeting(
         uint256 _year,
         uint256 _month,
         uint256 _day,
-        CalendarLib.Time calldata _start,
-        CalendarLib.Time calldata _end
+        uint256 _arrayPosition
     ) external {
-
         // search for the meeting position in the meetings array
-        uint256 i = 0;
         uint256 length = dateToMeetings[_year][_month][_day].length;
-        while (i < length) {
 
-            if (msg.sender == dateToMeetings[_year][_month][_day][i].attendee
-            && CalendarLib.isEqual(_start, dateToMeetings[_year][_month][_day][i].start)
-            && CalendarLib.isEqual(_end, dateToMeetings[_year][_month][_day][i].end)
-            ) {
-                break;
-            }
-            i++;
-        }
+        require(_arrayPosition < length, "Meeting does not exist.");
 
-        require(i != length, "Meeting not found.");
+        require(msg.sender == dateToMeetings[_year][_month][_day][_arrayPosition].attendee,
+            "You cannot cancel a meeting that you have not booked yourself.");
+
+        emit MeetingCancelled(
+            msg.sender, _year, _month, _day,
+            dateToMeetings[_year][_month][_day][_arrayPosition].hour,
+            dateToMeetings[_year][_month][_day][_arrayPosition].minute,
+            dateToMeetings[_year][_month][_day][_arrayPosition].duration
+        );
 
         // remove element by overwriting it with the last element
-        dateToMeetings[_year][_month][_day][i] = dateToMeetings[_year][_month][_day][length - 1];
+        dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][_month][_day][length - 1];
         dateToMeetings[_year][_month][_day].pop();
-
-        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, _start.hour, _start.minute, _end.hour, _end.minute);
     }
 }

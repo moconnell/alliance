@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./Calendar.sol";
-import "hardhat/console.sol";
 
 contract CalendarFactory {
 
@@ -24,24 +23,23 @@ contract CalendarFactory {
     }
     
     function createCalendar(
-        int8 _timezone,
         string memory _emailAddress,
         bool[7] memory _availableDays,
-        CalendarLib.Time calldata _availableStartTime,
-        CalendarLib.Time calldata _availableEndTime
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
+        uint16 _durationInMinutes
     ) external returns (uint256){
-        require(CalendarLib.isLess(_availableStartTime, _availableEndTime),
-            "The time of start must be earlier than the end.");
+        require(_durationInMinutes < 1440 ,"The duration must be less than 24h."); // 60min/h * 24h = 1440 min
 
         address clone = Clones.clone(calendarImplementation);
 
         Calendar(clone).initialize(
             msg.sender,
-            _timezone,
             _emailAddress,
             _availableDays,
-            _availableStartTime,
-            _availableEndTime
+            _availableStartHour,
+            _availableStartMinute,
+            _durationInMinutes
         );
 
         uint256 id = calendarCount;
