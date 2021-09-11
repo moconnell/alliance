@@ -8,7 +8,7 @@
   },
   "author": "koloz",
   "contributors": [
-      "mheuer <> (https://github.com/Michael-A-Heuer/alliance)"
+    "mheuer <> (https://github.com/Michael-A-Heuer/alliance)"
   ],
   "license": "MIT",
   "devDependencies": {
@@ -39,7 +39,6 @@
     "typescript": "^4.4.2"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0",
     "@openzeppelin/contracts-upgradeable": "^4.2.0"
   }
 }

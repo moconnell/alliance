@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/proxy/Clones.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
 import "./Calendar.sol";
 
 contract CalendarFactory {
@@ -31,7 +31,7 @@ contract CalendarFactory {
     ) external returns (uint256){
         require(_durationInMinutes < 1440 ,"The duration must be less than 24h."); // 60min/h * 24h = 1440 min
 
-        address clone = Clones.clone(calendarImplementation);
+        address clone = ClonesUpgradeable.clone(calendarImplementation);
 
         Calendar(clone).initialize(
             msg.sender,
