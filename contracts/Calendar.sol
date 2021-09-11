@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "./CalendarStorage.sol";
 import "./DateTime.sol";
 
-import "hardhat/console.sol";
-
 contract Calendar is CalendarStorage, Initializable {
     modifier onlyOwner() {
         require(owner == msg.sender, "Caller is not the owner.");
@@ -92,7 +90,7 @@ contract Calendar is CalendarStorage, Initializable {
         emit MeetingBooked(msg.sender, _year, _month, _day, _hour, _minute, _duration);
     }
 
-    function checkDay(uint256 _year, uint256 _month, uint256 _day, uint16 _startMinute, uint16 _duration) public view {
+    function checkDay(uint256 _year, uint256 _month, uint256 _day, uint16 _startMinute, uint16 _duration) internal view {
         // Compare existing meetings on the same day for collisions
         for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
             Meeting memory other = dateToMeetings[_year][_month][_day][i];
@@ -109,7 +107,7 @@ contract Calendar is CalendarStorage, Initializable {
         }
     }
 
-    function checkPrevDay(uint16 _startMinute, uint256 days_) public view {
+    function checkPrevDay(uint16 _startMinute, uint256 days_) internal view {
         (uint256 prevYear, uint256 prevMonth, uint256 prevDay) = DateTime._daysToDate(days_ - 1);
 
         for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
@@ -123,7 +121,7 @@ contract Calendar is CalendarStorage, Initializable {
         }
     }
 
-    function checkNextDay(uint16 _endMinute, uint256 days_) public view {
+    function checkNextDay(uint16 _endMinute, uint256 days_) internal view {
         (uint256 nextYear, uint256 nextMonth, uint256 nextDay) = DateTime._daysToDate(days_ + 1);
 
         for (uint256 i = 0; i < dateToMeetings[nextYear][nextMonth][nextDay].length; i++) {
@@ -136,7 +134,6 @@ contract Calendar is CalendarStorage, Initializable {
                 "Overlap with existing meeting on next day.");
         }
     }
-
 
     function getMeetings(
         uint256 _year,
@@ -160,15 +157,15 @@ contract Calendar is CalendarStorage, Initializable {
         require(msg.sender == dateToMeetings[_year][_month][_day][_arrayPosition].attendee,
             "You cannot cancel a meeting that you have not booked yourself.");
 
-        // only to emit event
-        uint16 startHour = dateToMeetings[_year][_month][_day][_arrayPosition].hour;
-        uint16 startMinute = dateToMeetings[_year][_month][_day][_arrayPosition].minute;
-        uint16 duration = dateToMeetings[_year][_month][_day][_arrayPosition].duration;
+        emit MeetingCancelled(
+            msg.sender, _year, _month, _day,
+            dateToMeetings[_year][_month][_day][_arrayPosition].hour,
+            dateToMeetings[_year][_month][_day][_arrayPosition].minute,
+            dateToMeetings[_year][_month][_day][_arrayPosition].duration
+        );
 
         // remove element by overwriting it with the last element
         dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][_month][_day][length - 1];
         dateToMeetings[_year][_month][_day].pop();
-
-        emit MeetingCancelled(msg.sender, _year, _month, _day, startHour, startMinute, duration);
     }
 }
