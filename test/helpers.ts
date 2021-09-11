@@ -20,6 +20,13 @@ const cal2Config = {
   duration : 9*60, // 16:00 UTC
 }
 
+const cal3Config = {
+  emailAddress : "carl@mail.com",
+  availableDays : [true, true, true, true, true, true, true],
+  startTime : [18, 0], //  16:00 UTC
+  duration : 8*60, // 2:00 UTC + 1 day
+}
+
 async function deployCalendarFactory(deployer: Signer) {
   // deploy CalendarLib
   const CalendarLib = await ethers.getContractFactory("CalendarLib");
@@ -55,6 +62,7 @@ async function deployCalendar(calendarFactory: Contract, signer: Signer, config:
 export {
   cal1Config,
   cal2Config,
+  cal3Config,
   deployCalendarFactory,
   deployCalendar
 }

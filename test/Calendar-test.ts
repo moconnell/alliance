@@ -2,13 +2,13 @@ import { ethers } from "hardhat";
 import { Contract, Signer } from "ethers";
 import chai from "chai";
 import {
-  cal1Config, cal2Config,
+  cal1Config, cal2Config, cal3Config,
   deployCalendarFactory, deployCalendar
 } from "./helpers";
 
 describe("Calendar", function() {
   let calendarFactory: Contract, calendarLib: Contract;
-  let cal1: Contract, cal2: Contract;
+  let cal1: Contract, cal2: Contract, cal3: Contract;
   let signer1: Signer, signer2: Signer, signer3: Signer;
 
   beforeEach(async function() {
@@ -16,6 +16,7 @@ describe("Calendar", function() {
     [calendarFactory, calendarLib] = await deployCalendarFactory(signer1);
     [cal1] = await deployCalendar(calendarFactory, signer1, cal1Config);
     [cal2] = await deployCalendar(calendarFactory, signer2, cal2Config);
+    [cal3] = await deployCalendar(calendarFactory, signer3, cal3Config);
   });
 
   it("books meetings with others within the available hours", async function() {
@@ -51,7 +52,6 @@ describe("Calendar", function() {
     chai.expect(res2[1].durationInMinutes).to.deep.equal(duration);
 
   });
-
 
   it("cancels owned meetings", async function() {
     const start = [14, 15];
@@ -117,6 +117,14 @@ describe("Calendar", function() {
       cal1.connect(signer3).bookMeeting(2021, 12, 31, [13, 0], 180)
     ).to.be.revertedWith("Overlap with existing meeting.");
   });
+
+  it("prohibits to book a meeting that overlaps with a meeting from the previous day", async function() {
+    await cal3.connect(signer2).bookMeeting(2021, 12, 31, [23, 0], 120);
+    await chai.expect(
+      cal3.connect(signer2).bookMeeting(2022, 1, 1, [0, 30], 60)
+    ).to.be.revertedWith("Overlap with existing meeting on previous day.");
+  });
+
 
   it("prohibits cancelling meetings of others", async function() {
     await cal2.connect(signer1).bookMeeting(2021, 12, 31, [14, 15], 60);

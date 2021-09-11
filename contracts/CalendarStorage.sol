@@ -14,5 +14,5 @@ contract CalendarStorage {
     string public emailAddress;
     bool[7] public availableDays;
     uint16 earliestStartMinute;
-    uint16 latestEndMinute;
+    uint16 availableDuration;
 }

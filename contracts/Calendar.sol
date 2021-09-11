@@ -27,7 +27,7 @@ contract Calendar is CalendarStorage, Initializable {
         emailAddress = _emailAddress;
         availableDays = _availableDays;
         earliestStartMinute = CalendarLib.timeToMinuteOfDay(_availableStartTime);
-        latestEndMinute = earliestStartMinute + _durationInMinutes;
+        availableDuration = _durationInMinutes;
     }
 
     function setAvailableDays(bool[7] memory _availableDays) external onlyOwner {
@@ -36,7 +36,7 @@ contract Calendar is CalendarStorage, Initializable {
 
     function changeAvailableTimes(CalendarLib.Time calldata _start, uint16 _durationInMinutes) external onlyOwner {
         earliestStartMinute = CalendarLib.timeToMinuteOfDay(_start);
-        latestEndMinute = earliestStartMinute + _durationInMinutes;
+        availableDuration = _durationInMinutes;
     }
 
     function bookMeeting(
@@ -49,10 +49,14 @@ contract Calendar is CalendarStorage, Initializable {
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
 
         uint16 startMinute = CalendarLib.timeToMinuteOfDay(_start);
-        uint16 endMinute = startMinute + _durationInMinutes;
 
-        require(earliestStartMinute <= startMinute
-            && endMinute <= latestEndMinute, "Time not available.");
+        if (earliestStartMinute <= startMinute)
+            require(_durationInMinutes + (startMinute - earliestStartMinute) <= availableDuration,
+            "Time not available.");
+        else{ // overnight case
+            require(_durationInMinutes + (startMinute + 1440-earliestStartMinute) <= availableDuration,
+                "Time not available.");
+        }
 
         uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 0);
         require(timestamp > block.timestamp, "Cannot book meeting in the past");
@@ -63,17 +67,26 @@ contract Calendar is CalendarStorage, Initializable {
         for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
             CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
 
-            // TODO Collision might come from the day before
+            uint16 otherStartMinute = other.start.hour * 60 + other.start.minute;
+            uint16 otherEndMinute = otherStartMinute + other.durationInMinutes;
+
+            require(otherEndMinute <= startMinute
+                || startMinute + _durationInMinutes  <= otherStartMinute,
+                "Overlap with existing meeting."
+            );
+        }
+
+        // check also the previous day
+        (uint256 prevYear, uint256 prevMonth, uint256 prevDay)
+        = DateTime._daysToDate(DateTime._daysFromDate(_year, _month, _day) - 1);
+
+        for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
+            CalendarLib.Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
 
             uint16 otherStartMinute = other.start.hour * 60 + other.start.minute;
             uint16 otherEndMinute = otherStartMinute + other.durationInMinutes;
 
-            //TODO check if nested mapping call is more gas efficient than memory struct
-
-            require(otherEndMinute <= startMinute
-                || endMinute <= otherStartMinute,
-                "Overlap with existing meeting."
-            );
+            require(otherEndMinute <= startMinute, "Overlap with existing meeting on previous day.");
         }
 
         // push
@@ -90,7 +103,6 @@ contract Calendar is CalendarStorage, Initializable {
             _start.hour, _start.minute,
             _durationInMinutes
         );
-
     }
 
     function getMeetings(
@@ -122,8 +134,6 @@ contract Calendar is CalendarStorage, Initializable {
         // remove element by overwriting it with the last element
         dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][_month][_day][length - 1];
         dateToMeetings[_year][_month][_day].pop();
-
-        //TODO if meeting over night
 
         emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, start.hour, start.minute, duration);
     }
