@@ -39,7 +39,7 @@ contract Calendar is CalendarStorage, Initializable {
         uint16 _availableStartMinute,
         uint16 _durationInMinutes
     ) external onlyOwner {
-        earliestStartMinute = _availableStartHour*60 + _availableStartMinute;
+        earliestStartMinute = _availableStartHour * 60 + _availableStartMinute;
         minutesAvailable = _durationInMinutes;
     }
 
@@ -68,33 +68,13 @@ contract Calendar is CalendarStorage, Initializable {
 
         require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
 
-        // Compare existing events for collisions
-        for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
-            CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
+        // check existing
+        checkDay(_year, _month, _day, startMinute, _duration);
 
-            uint16 otherStartMinute = other.hour * 60 + other.minute;
-            uint16 otherEndMinute = otherStartMinute + other.duration;
+        // Compare existing meetings on the previous day for collisions
+        uint256 days_ = DateTime._daysFromDate(_year, _month, _day);
+        checkPrevDay(startMinute, days_);
 
-            require(otherEndMinute <= startMinute
-                || startMinute + _duration <= otherStartMinute,
-                "Overlap with existing meeting."
-            );
-        }
-
-        // check also the previous day
-        (uint256 prevYear, uint256 prevMonth, uint256 prevDay)
-        = DateTime._daysToDate(DateTime._daysFromDate(_year, _month, _day) - 1);
-
-        for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
-            CalendarLib.Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
-
-            //uint16 otherStartMinute = other.hour * 60 + other.minute;
-            //uint16 otherEndMinute = otherStartMinute + other.duration;
-            uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
-
-            require(otherEndMinute <= startMinute,
-                "Overlap with existing meeting on previous day.");
-        }
 
         // push
         dateToMeetings[_year][_month][_day].push(
@@ -112,6 +92,39 @@ contract Calendar is CalendarStorage, Initializable {
             _duration
         );
     }
+
+    function checkDay(uint256 _year, uint256 _month, uint256 _day,
+        uint16 _startMinute, uint16 _duration) public view {
+        // Compare existing meetings on the same day for collisions
+        for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
+            CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
+
+            uint16 otherStartMinute = other.hour * 60 + other.minute;
+            uint16 otherEndMinute = otherStartMinute + other.duration;
+
+            // check if the other meeting ends before the new meeting starts
+            // or if the new meeting ends before the other meeting starts
+            require(otherEndMinute <= _startMinute
+                || _startMinute + _duration <= otherStartMinute,
+                "Overlap with existing meeting."
+            );
+        }
+    }
+
+    function checkPrevDay(uint16 _startMinute, uint256 days_) public view {
+        (uint256 prevYear, uint256 prevMonth, uint256 prevDay) = DateTime._daysToDate(days_ - 1);
+
+        for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
+            CalendarLib.Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
+
+            uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
+
+            // check if the other meeting ends before the new one starts
+            require(otherEndMinute <= _startMinute,
+                "Overlap with existing meeting on previous day.");
+        }
+    }
+
 
     function getMeetings(
         uint256 _year,

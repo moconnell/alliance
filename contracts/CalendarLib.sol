@@ -13,13 +13,13 @@ library CalendarLib {
         address indexed _attendee,
         uint256 year, uint256 month, uint256 day,
         uint256 hour, uint256 minute,
-        uint16 duration
+        uint256 duration
     );
 
     event MeetingCancelled(
         address indexed _attendee,
         uint256 year, uint256 month, uint256 day,
         uint256 hour, uint256 minute,
-        uint16 duration
+        uint256 duration
     );
 }
