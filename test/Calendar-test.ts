@@ -128,6 +128,13 @@ describe("Calendar", function() {
       ).to.be.revertedWith("Overlap with existing meeting on previous day.");
     });
 
+  it("prohibits to book a meeting that overlaps with a meeting from the next day", async function() {
+    await cal3.connect(signer2).bookMeeting(2022, 1, 1, 0, 30, 60);
+
+    await chai.expect(
+      cal3.connect(signer2).bookMeeting(2021, 12, 31, 23, 0, 120)
+    ).to.be.revertedWith("Overlap with existing meeting on next day.");
+  });
 
     it("prohibits cancelling meetings of others", async function() {
       await cal2.connect(signer1).bookMeeting(2021, 12, 31, 14, 15, 60);
