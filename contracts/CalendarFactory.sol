@@ -13,8 +13,8 @@ contract CalendarFactory {
     uint256 public calendarCount = 0;
 
     event CalendarCreated(
-        address indexed userAddress,
-        address indexed calenderAddress,
+        address indexed calendar,
+        address indexed owner,
         uint256 id
     );
 
@@ -48,7 +48,7 @@ contract CalendarFactory {
         calendarIdToCalendar[id] = clone;
         userToCalendarIds[msg.sender].push(id);
 
-        emit CalendarCreated(msg.sender, clone, id);
+        emit CalendarCreated(clone, msg.sender, id);
 
         return id;
     }
