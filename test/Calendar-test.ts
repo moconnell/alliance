@@ -36,20 +36,20 @@ describe("Calendar", function() {
 
     chai.expect(res1[0].attendee).to.equal(signer1Address);
     chai.expect(res1[0].start.slice(0, 2)).to.deep.equal(start1);
-    chai.expect(res1[0].durationInMinutes).to.deep.equal(duration);
-
+    chai.expect(res1[0].duration).to.deep.equal(duration);
 
     const start2 = [15, 30];
     await cal2.connect(signer1).bookMeeting(2021, 12, 31, start2, duration);
     const res2 = await cal2.getMeetings(2021, 12, 31);
     chai.expect(res2).to.be.instanceof(Array);
     chai.expect(res2).to.have.length(2);
+
     chai.expect(res2[0].attendee).to.equal(signer1Address);
     chai.expect(res2[0].start.slice(0, 2)).to.deep.equal(start1);
-    chai.expect(res2[0].durationInMinutes).to.deep.equal(duration);
+    chai.expect(res2[0].duration).to.deep.equal(duration);
     chai.expect(res2[1].attendee).to.equal(signer1Address);
     chai.expect(res2[1].start.slice(0, 2)).to.deep.equal(start2);
-    chai.expect(res2[1].durationInMinutes).to.deep.equal(duration);
+    chai.expect(res2[1].duration).to.deep.equal(duration);
 
   });
 

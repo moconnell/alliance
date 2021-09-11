@@ -5,7 +5,7 @@ library CalendarLib {
     struct Meeting {
         address attendee;   // 32 bytes
         Time start;         // 2 bytes
-        uint16 durationInMinutes;    // 2 bytes
+        uint16 duration;    // 2 bytes
         //Time end;           // 2 bytes
     }
 
@@ -13,14 +13,14 @@ library CalendarLib {
         address indexed _attendee,
         uint256 year, uint256 month, uint256 day,
         uint256 startHour, uint256 startMinute,
-        uint16 durationInMinutes
+        uint16 duration
     );
 
     event MeetingCancelled(
         address indexed _attendee,
         uint256 year, uint256 month, uint256 day,
         uint256 startHour, uint256 startMinute,
-        uint16 durationInMinutes
+        uint16 duration
     );
 
     struct Time {
