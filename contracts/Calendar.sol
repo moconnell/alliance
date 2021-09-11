@@ -49,6 +49,7 @@ contract Calendar is CalendarStorage, Initializable {
         uint16 _duration
     ) public {
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
+        require(DateTime.isValidDateTime(_year, _month, _day, _hour, _minute,0), "Date and time are not valid.");
 
         uint16 startMinute = _hour * 60 + _minute;
         uint16 endMinute = startMinute + _duration;

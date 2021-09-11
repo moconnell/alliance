@@ -78,6 +78,16 @@ describe("Calendar", function() {
       ).to.be.revertedWith("Meeting does not exist.");
     });
 
+  it("reverts on invalid date and time", async function() {
+    await chai.expect(
+      cal2.connect(signer1).bookMeeting(2021, 2, 29, 12, 0, 60)
+    ).to.be.revertedWith("Date and time are not valid.");
+
+    await chai.expect(
+      cal2.connect(signer1).bookMeeting(2021, 2, 28, 24, 0, 10)
+    ).to.be.revertedWith("Date and time are not valid.");
+  });
+
     it("prohibits booking meetings outside available days", async function() {
       await chai.expect(cal2.connect(signer1).bookMeeting(2022, 1, 1, 10, 0, 60)
       ).to.be.revertedWith("Day not available.");
