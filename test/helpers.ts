@@ -31,17 +31,9 @@ const cal3Config = {
 }
 
 async function deployCalendarFactory(deployer: Signer) {
-  // deploy CalendarLib
-  const CalendarLib = await ethers.getContractFactory("CalendarLib");
-  let calendarLib = await CalendarLib.deploy();
-
   // deploy CalendarFactory
-  const CalendarFactory = await ethers.getContractFactory("CalendarFactory", {
-    libraries: {
-      //CalendarLib: calendarLib.address
-    } });
-
-  return [await CalendarFactory.deploy(), calendarLib];
+  const CalendarFactory = await ethers.getContractFactory("CalendarFactory");
+  return await CalendarFactory.deploy();
 }
 
 async function deployCalendar(calendarFactory: Contract, signer: Signer, config: Object) {

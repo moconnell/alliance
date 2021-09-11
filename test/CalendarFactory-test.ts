@@ -15,7 +15,7 @@ describe("CalendarFactory", function() {
 
   beforeEach(async function() {
     [signer1, signer2] = await ethers.getSigners();
-    [calendarFactory] = await deployCalendarFactory(signer1);
+    calendarFactory = await deployCalendarFactory(signer1);
     [cal1, cal1Id] = await deployCalendar(calendarFactory, signer1, cal1Config);
     [cal2, cal2Id] = await deployCalendar(calendarFactory, signer2, cal2Config);
   });
