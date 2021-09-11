@@ -13,6 +13,6 @@ contract CalendarStorage {
     address public owner;
     string public emailAddress;
     bool[7] public availableDays;
-    CalendarLib.Time public availableStart;
-    uint16 durationInMinutes;
+    uint16 earliestStartMinute;
+    uint16 latestEndMinute;
 }

@@ -26,8 +26,8 @@ contract Calendar is CalendarStorage, Initializable {
         owner = _owner;
         emailAddress = _emailAddress;
         availableDays = _availableDays;
-        availableStart = _availableStartTime;
-        durationInMinutes = _durationInMinutes;
+        earliestStartMinute = CalendarLib.timeToMinuteOfDay(_availableStartTime);
+        latestEndMinute = earliestStartMinute + _durationInMinutes;
     }
 
     function setAvailableDays(bool[7] memory _availableDays) external onlyOwner {
@@ -35,8 +35,8 @@ contract Calendar is CalendarStorage, Initializable {
     }
 
     function changeAvailableTimes(CalendarLib.Time calldata _start, uint16 _durationInMinutes) external onlyOwner {
-        availableStart = _start;
-        durationInMinutes = _durationInMinutes;
+        earliestStartMinute = CalendarLib.timeToMinuteOfDay(_start);
+        latestEndMinute = earliestStartMinute + _durationInMinutes;
     }
 
     function bookMeeting(
@@ -50,8 +50,6 @@ contract Calendar is CalendarStorage, Initializable {
 
         uint16 startMinute = CalendarLib.timeToMinuteOfDay(_start);
         uint16 endMinute = startMinute + _durationInMinutes;
-        uint16 earliestStartMinute = CalendarLib.timeToMinuteOfDay(availableStart);
-        uint16 latestEndMinute = earliestStartMinute + durationInMinutes;
 
         require(earliestStartMinute <= startMinute
             && endMinute <= latestEndMinute, "Time not available.");
@@ -64,6 +62,8 @@ contract Calendar is CalendarStorage, Initializable {
         // Compare existing events for collisions
         for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
             CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
+
+            // TODO Collision might come from the day before
 
             uint16 otherStartMinute = other.start.hour * 60 + other.start.minute;
             uint16 otherEndMinute = otherStartMinute + other.durationInMinutes;
@@ -88,7 +88,6 @@ contract Calendar is CalendarStorage, Initializable {
         emit CalendarLib.MeetingBooked(
             msg.sender, _year, _month, _day,
             _start.hour, _start.minute,
-        //_end.hour, _end.minute
             _durationInMinutes
         );
 
@@ -118,7 +117,6 @@ contract Calendar is CalendarStorage, Initializable {
 
         // only to emit event
         CalendarLib.Time memory start = dateToMeetings[_year][_month][_day][_arrayPosition].start;
-        //CalendarLib.Time memory end = dateToMeetings[_year][_month][_day][_arrayPosition].end;
         uint16 duration = dateToMeetings[_year][_month][_day][_arrayPosition].durationInMinutes;
 
         // remove element by overwriting it with the last element

@@ -132,5 +132,5 @@ describe("Calendar", function() {
       cal2.connect(signer2).bookMeeting(2021, 12, 31, [14, 15], 60)
     ).to.be.revertedWith("You cannot book a meeting with yourself.");
   });
-  
+
 });
