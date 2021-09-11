@@ -9,21 +9,24 @@ import chai from "chai";
 const cal1Config = {
   emailAddress : "alice@mail.com",
   availableDays : [true, true, true, true, true, false, false],
-  startTime : [9, 30], // 9:30 UTC
+  hour : 9,
+  minute : 30, //  9:30 UTC
   duration : 8*60, // 16:30 UTC
 }
 
 const cal2Config = {
   emailAddress : "bob@mail.com",
   availableDays : [true, true, true, true, true, false, false],
-  startTime : [8, 0], //  8:00 UTC
+  hour : 8,
+  minute : 0, //  8:00 UTC
   duration : 9*60, // 16:00 UTC
 }
 
 const cal3Config = {
   emailAddress : "carl@mail.com",
   availableDays : [true, true, true, true, true, true, true],
-  startTime : [18, 0], //  16:00 UTC
+  hour : 18,
+  minute : 0, //  16:00 UTC
   duration : 8*60, // 2:00 UTC + 1 day
 }
 
@@ -35,7 +38,7 @@ async function deployCalendarFactory(deployer: Signer) {
   // deploy CalendarFactory
   const CalendarFactory = await ethers.getContractFactory("CalendarFactory", {
     libraries: {
-      CalendarLib: calendarLib.address
+      //CalendarLib: calendarLib.address
     } });
 
   return [await CalendarFactory.deploy(), calendarLib];

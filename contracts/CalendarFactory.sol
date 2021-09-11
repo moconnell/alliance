@@ -25,7 +25,8 @@ contract CalendarFactory {
     function createCalendar(
         string memory _emailAddress,
         bool[7] memory _availableDays,
-        CalendarLib.Time calldata _availableStartTime,
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
         uint16 _durationInMinutes
     ) external returns (uint256){
         require(_durationInMinutes < 1440 ,"The duration must be less than 24h."); // 60min/h * 24h = 1440 min
@@ -36,7 +37,8 @@ contract CalendarFactory {
             msg.sender,
             _emailAddress,
             _availableDays,
-            _availableStartTime,
+            _availableStartHour,
+            _availableStartMinute,
             _durationInMinutes
         );
 

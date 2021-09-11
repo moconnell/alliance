@@ -18,14 +18,15 @@ contract Calendar is CalendarStorage, Initializable {
         address _owner,
         string memory _emailAddress,
         bool[7] memory _availableDays,
-        CalendarLib.Time calldata _availableStartTime,
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
         uint16 _minutesAvailable
     ) external initializer
     {
         owner = _owner;
         emailAddress = _emailAddress;
         availableDays = _availableDays;
-        earliestStartMinute = CalendarLib.timeToMinuteOfDay(_availableStartTime);
+        earliestStartMinute = _availableStartHour*60 + _availableStartMinute;
         minutesAvailable = _minutesAvailable;
     }
 
@@ -33,8 +34,12 @@ contract Calendar is CalendarStorage, Initializable {
         availableDays = _availableDays;
     }
 
-    function changeAvailableTimes(CalendarLib.Time calldata _start, uint16 _durationInMinutes) external onlyOwner {
-        earliestStartMinute = CalendarLib.timeToMinuteOfDay(_start);
+    function changeAvailableTimes(
+        uint16 _availableStartHour,
+        uint16 _availableStartMinute,
+        uint16 _durationInMinutes
+    ) external onlyOwner {
+        earliestStartMinute = _availableStartHour*60 + _availableStartMinute;
         minutesAvailable = _durationInMinutes;
     }
 
@@ -42,12 +47,13 @@ contract Calendar is CalendarStorage, Initializable {
         uint256 _year,
         uint256 _month,
         uint256 _day,
-        CalendarLib.Time calldata _start,
+        uint16 _hour,
+        uint16 _minute,
         uint16 _duration
     ) public {
         require(msg.sender != owner, "You cannot book a meeting with yourself.");
 
-        uint16 startMinute = CalendarLib.timeToMinuteOfDay(_start);
+        uint16 startMinute = _hour * 60 + _minute;
 
         if (earliestStartMinute <= startMinute)
             require(_duration + (startMinute - earliestStartMinute) <= minutesAvailable,
@@ -57,7 +63,7 @@ contract Calendar is CalendarStorage, Initializable {
                 "Time not available.");
         }
 
-        uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _start.hour, _start.minute, 0);
+        uint256 timestamp = DateTime.timestampFromDateTime(_year, _month, _day, _hour, _minute, 0);
         require(timestamp > block.timestamp, "Cannot book meeting in the past");
 
         require(availableDays[DateTime.getDayOfWeek(timestamp) - 1], "Day not available.");
@@ -66,7 +72,7 @@ contract Calendar is CalendarStorage, Initializable {
         for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
             CalendarLib.Meeting memory other = dateToMeetings[_year][_month][_day][i];
 
-            uint16 otherStartMinute = other.start.hour * 60 + other.start.minute;
+            uint16 otherStartMinute = other.hour * 60 + other.minute;
             uint16 otherEndMinute = otherStartMinute + other.duration;
 
             require(otherEndMinute <= startMinute
@@ -82,24 +88,27 @@ contract Calendar is CalendarStorage, Initializable {
         for (uint256 i = 0; i < dateToMeetings[prevYear][prevMonth][prevDay].length; i++) {
             CalendarLib.Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
 
-            uint16 otherStartMinute = other.start.hour * 60 + other.start.minute;
-            uint16 otherEndMinute = otherStartMinute + other.duration;
+            //uint16 otherStartMinute = other.hour * 60 + other.minute;
+            //uint16 otherEndMinute = otherStartMinute + other.duration;
+            uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
 
-            require(otherEndMinute <= startMinute, "Overlap with existing meeting on previous day.");
+            require(otherEndMinute <= startMinute,
+                "Overlap with existing meeting on previous day.");
         }
 
         // push
         dateToMeetings[_year][_month][_day].push(
             CalendarLib.Meeting({
                 attendee : msg.sender,
-                start : _start,
+                hour : _hour,
+                minute : _minute,
                 duration : _duration
             })
         );
 
         emit CalendarLib.MeetingBooked(
             msg.sender, _year, _month, _day,
-            _start.hour, _start.minute,
+            _hour, _minute,
             _duration
         );
     }
@@ -127,13 +136,14 @@ contract Calendar is CalendarStorage, Initializable {
             "You cannot cancel a meeting that you have not booked yourself.");
 
         // only to emit event
-        CalendarLib.Time memory start = dateToMeetings[_year][_month][_day][_arrayPosition].start;
+        uint16 startHour = dateToMeetings[_year][_month][_day][_arrayPosition].hour;
+        uint16 startMinute = dateToMeetings[_year][_month][_day][_arrayPosition].minute;
         uint16 duration = dateToMeetings[_year][_month][_day][_arrayPosition].duration;
 
         // remove element by overwriting it with the last element
         dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][_month][_day][length - 1];
         dateToMeetings[_year][_month][_day].pop();
 
-        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, start.hour, start.minute, duration);
+        emit CalendarLib.MeetingCancelled(msg.sender, _year, _month, _day, startHour, startMinute, duration);
     }
 }
