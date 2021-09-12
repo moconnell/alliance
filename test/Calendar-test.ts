@@ -16,9 +16,9 @@ describe("Calendar", function() {
   beforeEach(async function() {
     [signer1, signer2, signer3] = await ethers.getSigners();
     calendarFactory = await deployCalendarFactory(signer1);
-    [cal1] = await deployCalendar(calendarFactory, signer1, cal1Config);
-    [cal2] = await deployCalendar(calendarFactory, signer2, cal2Config);
-    [cal3] = await deployCalendar(calendarFactory, signer3, cal3Config);
+    cal1 = await deployCalendar(calendarFactory, signer1, cal1Config);
+    cal2 = await deployCalendar(calendarFactory, signer2, cal2Config);
+    cal3 = await deployCalendar(calendarFactory, signer3, cal3Config);
   });
 
   it("books meetings with others within the available hours", async function() {

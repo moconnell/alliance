@@ -45,13 +45,12 @@ async function deployCalendar(calendarFactory: Contract, signer: Signer, config:
   const txEvent = receipt.events?.[0]?.args;
   let ownerAddr = txEvent?.owner;
   let calendarAddr = txEvent?.calendar;
-  let id = txEvent?.id;
 
   chai.expect(ownerAddr).to.equal(await signer.getAddress());
-  const calendarAddressFromMapping = await calendarFactory.calendarIdToCalendar(id);
+  const calendarAddressFromMapping = await calendarFactory.userToCalendar(ownerAddr);
   chai.expect(calendarAddr).to.equal(calendarAddressFromMapping);
 
-  return [await ethers.getContractAt("Calendar", calendarAddr), id];
+  return await ethers.getContractAt("Calendar", calendarAddr);
 }
 
 export {
