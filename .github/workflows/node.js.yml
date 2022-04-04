@@ -29,4 +29,3 @@ jobs:
     - run: npm ci
     - run: npx hardhat compile
     - run: npx hardhat test
-    - run: npx hardhat coverage
