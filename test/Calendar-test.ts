@@ -191,7 +191,7 @@ describe("Calendar", function () {
     await cal3.connect(signer2).bookMeeting(year, 12, 31, 23, 0, 120);
     await chai
       .expect(cal3.connect(signer2).bookMeeting(year + 1, 1, 1, 0, 30, 60))
-      .to.be.revertedWith("Overlap with existing meeting on previous day.");
+      .to.be.revertedWith("Overlaps meeting previous day");
   });
 
   it("prohibits to book a meeting that overlaps with a meeting from the next day", async function () {
@@ -200,7 +200,7 @@ describe("Calendar", function () {
 
     await chai
       .expect(cal3.connect(signer2).bookMeeting(year, 12, 31, 23, 0, 120))
-      .to.be.revertedWith("Overlap with existing meeting on next day.");
+      .to.be.revertedWith("Overlaps meeting next day");
   });
 
   it("prohibits cancelling meetings of others", async function () {
