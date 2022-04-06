@@ -9,7 +9,6 @@ import {
   deployCalendar,
 } from "./helpers";
 
-
 enum DayOfWeek {
   Sunday,
   Monday,
@@ -17,7 +16,7 @@ enum DayOfWeek {
   Wednesday,
   Thursday,
   Friday,
-  Saturday
+  Saturday,
 }
 
 const addDays = (date: Date, days: number) => {
@@ -30,14 +29,18 @@ const getNextDate = (dayOfWeek: DayOfWeek) => {
   const today = new Date();
   const daysToAdd = 7 + dayOfWeek - today.getDay();
   return addDays(today, daysToAdd > 7 ? daysToAdd - 7 : daysToAdd);
-}
+};
 
 const getNextYearMonthDay = (dayOfWeek: DayOfWeek) => {
   const next = getNextDate(dayOfWeek);
   return toYearMonthDay(next);
 };
 
-const toYearMonthDay = (date: Date) => [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+const toYearMonthDay = (date: Date) => [
+  date.getFullYear(),
+  date.getMonth() + 1,
+  date.getDate(),
+];
 
 describe("Calendar", function () {
   let calendarFactory: Contract;
@@ -184,25 +187,19 @@ describe("Calendar", function () {
   });
 
   it("prohibits to book a meeting that overlaps with a meeting from the previous day", async function () {
-    const date = getNextDate(DayOfWeek.Monday);
-    const [year1, month1, day1] = toYearMonthDay(date);
-    const nextDay = addDays(date, 1);
-    const [year2, month2, day2] = toYearMonthDay(nextDay);
-    await cal3.connect(signer2).bookMeeting(year1, month1, day1, 23, 0, 120);
+    const year = new Date().getFullYear();
+    await cal3.connect(signer2).bookMeeting(year, 12, 31, 23, 0, 120);
     await chai
-      .expect(cal3.connect(signer2).bookMeeting(year2, month2, day2, 0, 30, 60))
+      .expect(cal3.connect(signer2).bookMeeting(year + 1, 1, 1, 0, 30, 60))
       .to.be.revertedWith("Overlap with existing meeting on previous day.");
   });
 
   it("prohibits to book a meeting that overlaps with a meeting from the next day", async function () {
-    const date = getNextDate(DayOfWeek.Monday);
-    const [year1, month1, day1] = toYearMonthDay(date);
-    const dayPrior = addDays(date, -1);
-    const [year2, month2, day2] = toYearMonthDay(dayPrior);
-    await cal3.connect(signer2).bookMeeting(year1, month1, day1, 0, 30, 60);
+    const year = new Date().getFullYear();
+    await cal3.connect(signer2).bookMeeting(year + 1, 1, 1, 0, 30, 60);
 
     await chai
-      .expect(cal3.connect(signer2).bookMeeting(year2, month2, day2, 23, 0, 120))
+      .expect(cal3.connect(signer2).bookMeeting(year, 12, 31, 23, 0, 120))
       .to.be.revertedWith("Overlap with existing meeting on next day.");
   });
 
@@ -225,4 +222,3 @@ describe("Calendar", function () {
       .to.be.revertedWith("You cannot book a meeting with yourself.");
   });
 });
-
