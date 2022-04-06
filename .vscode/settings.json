@@ -1,0 +1,7 @@
+{
+    "hardhat.telemetry": true,
+    "mochaExplorer.require": "ts-node/register/files",
+    "mochaExplorer.files": "**/test/**/*.ts",
+    "mochaExplorer.ignore": "**/node_modules/**/*",
+  }
+  
