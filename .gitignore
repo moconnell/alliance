@@ -16,4 +16,4 @@ coverage.json
 .DS_Store
 
 # TypeChain generated
-typechain-types
+typechain-types/
