@@ -27,18 +27,18 @@ pragma solidity ^0.8.0;
 // ----------------------------------------------------------------------------
 
 library DateTime {
-    uint256 constant SECONDS_PER_DAY = 24 * 60 * 60;
-    uint256 constant SECONDS_PER_HOUR = 60 * 60;
-    uint256 constant SECONDS_PER_MINUTE = 60;
-    int256 constant OFFSET19700101 = 2440588;
+    uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
+    uint256 private constant SECONDS_PER_HOUR = 60 * 60;
+    uint256 private constant SECONDS_PER_MINUTE = 60;
+    int256 private constant OFFSET19700101 = 2440588;
 
-    uint256 constant DOW_MON = 1;
-    uint256 constant DOW_TUE = 2;
-    uint256 constant DOW_WED = 3;
-    uint256 constant DOW_THU = 4;
-    uint256 constant DOW_FRI = 5;
-    uint256 constant DOW_SAT = 6;
-    uint256 constant DOW_SUN = 7;
+    uint256 private constant DOW_MON = 1;
+    uint256 private constant DOW_TUE = 2;
+    uint256 private constant DOW_WED = 3;
+    uint256 private constant DOW_THU = 4;
+    uint256 private constant DOW_FRI = 5;
+    uint256 private constant DOW_SAT = 6;
+    uint256 private constant DOW_SUN = 7;
 
     // ------------------------------------------------------------------------
     // Calculate the number of days from 1970/01/01 to year/month/day using
@@ -58,7 +58,7 @@ library DateTime {
         uint256 month,
         uint256 day
     ) internal pure returns (uint256 _days) {
-        require(year >= 1970);
+        require(year >= 1970, "year < 1970");
         int256 _year = int256(year);
         int256 _month = int256(month);
         int256 _day = int256(day);
@@ -320,7 +320,7 @@ library DateTime {
         _daysFromDate(year, month, day) *
         SECONDS_PER_DAY +
         (timestamp % SECONDS_PER_DAY);
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function addMonths(uint256 timestamp, uint256 _months)
@@ -341,7 +341,7 @@ library DateTime {
         _daysFromDate(year, month, day) *
         SECONDS_PER_DAY +
         (timestamp % SECONDS_PER_DAY);
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function addDays(uint256 timestamp, uint256 _days)
@@ -350,7 +350,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp + _days * SECONDS_PER_DAY;
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function addHours(uint256 timestamp, uint256 _hours)
@@ -359,7 +359,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp + _hours * SECONDS_PER_HOUR;
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function addMinutes(uint256 timestamp, uint256 _minutes)
@@ -368,7 +368,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp + _minutes * SECONDS_PER_MINUTE;
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function addSeconds(uint256 timestamp, uint256 _seconds)
@@ -377,7 +377,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp + _seconds;
-        require(newTimestamp >= timestamp);
+        require(newTimestamp >= timestamp, "newTimestamp < timestamp");
     }
 
     function subYears(uint256 timestamp, uint256 _years)
@@ -396,7 +396,7 @@ library DateTime {
         _daysFromDate(year, month, day) *
         SECONDS_PER_DAY +
         (timestamp % SECONDS_PER_DAY);
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function subMonths(uint256 timestamp, uint256 _months)
@@ -417,7 +417,7 @@ library DateTime {
         _daysFromDate(year, month, day) *
         SECONDS_PER_DAY +
         (timestamp % SECONDS_PER_DAY);
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function subDays(uint256 timestamp, uint256 _days)
@@ -426,7 +426,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp - _days * SECONDS_PER_DAY;
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function subHours(uint256 timestamp, uint256 _hours)
@@ -435,7 +435,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp - _hours * SECONDS_PER_HOUR;
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function subMinutes(uint256 timestamp, uint256 _minutes)
@@ -444,7 +444,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp - _minutes * SECONDS_PER_MINUTE;
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function subSeconds(uint256 timestamp, uint256 _seconds)
@@ -453,7 +453,7 @@ library DateTime {
     returns (uint256 newTimestamp)
     {
         newTimestamp = timestamp - _seconds;
-        require(newTimestamp <= timestamp);
+        require(newTimestamp <= timestamp, "newTimestamp > timestamp");
     }
 
     function diffYears(uint256 fromTimestamp, uint256 toTimestamp)
@@ -461,7 +461,7 @@ library DateTime {
     pure
     returns (uint256 _years)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         (uint256 fromYear, , ) = _daysToDate(fromTimestamp / SECONDS_PER_DAY);
         (uint256 toYear, , ) = _daysToDate(toTimestamp / SECONDS_PER_DAY);
         _years = toYear - fromYear;
@@ -472,7 +472,7 @@ library DateTime {
     pure
     returns (uint256 _months)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         (uint256 fromYear, uint256 fromMonth, ) =
         _daysToDate(fromTimestamp / SECONDS_PER_DAY);
         (uint256 toYear, uint256 toMonth, ) =
@@ -485,7 +485,7 @@ library DateTime {
     pure
     returns (uint256 _days)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         _days = (toTimestamp - fromTimestamp) / SECONDS_PER_DAY;
     }
 
@@ -494,7 +494,7 @@ library DateTime {
     pure
     returns (uint256 _hours)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         _hours = (toTimestamp - fromTimestamp) / SECONDS_PER_HOUR;
     }
 
@@ -503,7 +503,7 @@ library DateTime {
     pure
     returns (uint256 _minutes)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         _minutes = (toTimestamp - fromTimestamp) / SECONDS_PER_MINUTE;
     }
 
@@ -512,7 +512,7 @@ library DateTime {
     pure
     returns (uint256 _seconds)
     {
-        require(fromTimestamp <= toTimestamp);
+        require(fromTimestamp <= toTimestamp, "fromTimestamp > toTimestamp");
         _seconds = toTimestamp - fromTimestamp;
     }
 }

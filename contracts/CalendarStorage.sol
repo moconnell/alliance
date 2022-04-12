@@ -31,8 +31,8 @@ contract CalendarStorage {
     bool[7] public availableDays;
 
     /// @notice _availableDays A fixed-size array of type `bool` and length `7` specifying on which days meetings can be booked.
-    uint16 earliestTimeInMinutes;
+    uint16 internal earliestTimeInMinutes;
 
     /// @notice _minutesAvailable The availablilty in minutes starting at the earliest time in which meetings can be booked.
-    uint16 minutesAvailable;
+    uint16 internal minutesAvailable;
 }

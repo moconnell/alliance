@@ -106,7 +106,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
         uint16 _minute,
         uint16 _duration
     ) public {
-        require(msg.sender != owner, "You cannot book a meeting with yourself.");
+        require(msg.sender != owner, "Cannot book meeting with self");
         require(DateTime.isValidDateTime(_year, _month, _day, _hour, _minute,0), "Date and time are not valid.");
 
         uint16 startMinute = _hour * 60 + _minute;
@@ -184,8 +184,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
             uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
 
             // check if the other meeting ends before the new one starts
-            require(otherEndMinute <= _startMinute,
-                "Overlap with existing meeting on previous day.");
+            require(otherEndMinute <= _startMinute, "Overlaps meeting previous day");
         }
     }
 
@@ -201,8 +200,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
             uint16 otherStartMinute = other.hour * 60 + other.minute;
 
             // check if the other meeting ends before the new one starts
-            require(_endMinute <= otherStartMinute,
-                "Overlap with existing meeting on next day.");
+            require(_endMinute <= otherStartMinute, "Overlaps meeting next day");
         }
     }
 
@@ -235,8 +233,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
 
         require(_arrayPosition < length, "Meeting does not exist.");
 
-        require(msg.sender == dateToMeetings[_year][_month][_day][_arrayPosition].attendee,
-            "You cannot cancel a meeting that you have not booked yourself.");
+        require(msg.sender == dateToMeetings[_year][_month][_day][_arrayPosition].attendee, "Not your booking!");
 
         emit MeetingCancelled(
             msg.sender, _year, _month, _day,

@@ -25,7 +25,7 @@ contract CalendarFactory {
     );
 
     /// @dev Contains the calendar implementation that is cloned.
-    address calendarImplementation;
+    address private calendarImplementation;
 
     /// @notice Maps between user and calendar addresses.
     mapping(address => address) public userToCalendar;
@@ -50,9 +50,9 @@ contract CalendarFactory {
         uint16 _earliestMinute,
         uint16 _minutesAvailable
     ) external {
-        require(_earliestHour < 24, "The start hour must be less than 24.");
-        require(_earliestMinute < 60, "The start hour must be less than 60.");
-        require(_minutesAvailable <= 1440, "The duration must be less than 24h.");
+        require(_earliestHour < 24, "Earliest hour > 23");
+        require(_earliestMinute < 60, "Earliest minute > 59");
+        require(_minutesAvailable <= 1440, "Minutes available > 24h");
         // 60min/h * 24h = 1440 min
 
         address clone = ClonesUpgradeable.clone(calendarImplementation);

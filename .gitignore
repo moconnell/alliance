@@ -5,5 +5,12 @@ node_modules
 cache
 artifacts
 
+# build artifacts
+coverage
+coverage.json
+
 # Jet Brains IDE files
 .idea
+
+# macOS
+.DS_Store
