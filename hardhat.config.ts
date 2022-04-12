@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
   networks: {
     localhost: {},
     ropsten: {
-      url: ROPSTEN_URL,
+      // url: ROPSTEN_URL,
     },
   },
   solidity: "0.8.9", // latest supported as of 2022-05-04, see https://hardhat.org/reference/solidity-support.html
