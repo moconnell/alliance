@@ -27,12 +27,12 @@ contract CalendarStorage {
     /// @notice The email address of the calendar owner.
     string public emailAddress;
 
-    /// @notice The email address of the calendar owner.
+    /// @notice A fixed-size array of type `bool` and length `7` specifying on which days meetings can be booked.
     bool[7] public availableDays;
 
-    /// @notice _availableDays A fixed-size array of type `bool` and length `7` specifying on which days meetings can be booked.
+    /// @notice The earliest time in total minutes at which meetings can be booked. 
     uint16 internal earliestTimeInMinutes;
 
-    /// @notice _minutesAvailable The availablilty in minutes starting at the earliest time in which meetings can be booked.
+    /// @notice The period in minutes starting at the earliest time in which meetings can be booked.
     uint16 internal minutesAvailable;
 }
