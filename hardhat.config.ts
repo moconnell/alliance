@@ -3,6 +3,8 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "tsconfig-paths/register";
+import "hardhat-gas-reporter";
+import "solidity-coverage";
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 import { task } from "hardhat/config";
