@@ -8,23 +8,38 @@ import {
   deployCalendar,
 } from "./helpers";
 import { Calendar, CalendarFactory } from "typechain-types";
-import { AvailabilityStruct, ProfileStruct } from "typechain-types/CalendarFactory";
+import {
+  AvailabilityStruct,
+  ProfileStruct,
+} from "typechain-types/CalendarFactory";
 
-const assertProfileEqual = (profile1: ProfileStruct, profile2: ProfileStruct) => {
+const assertProfileEqual = (
+  profile1: ProfileStruct,
+  profile2: ProfileStruct
+) => {
   chai.expect(profile1.description).to.equal(profile2.description);
   chai.expect(profile1.email).to.equal(profile2.email);
   chai.expect(profile1.picture).to.equal(profile2.picture);
   chai.expect(profile1.url).to.equal(profile2.url);
   chai.expect(profile1.username).to.equal(profile2.username);
-}
+};
 
-const assertAvailabilityEqual = (availability1: AvailabilityStruct, availability2: AvailabilityStruct) => {
-  chai.expect(availability1.availableDays).to.equal(availability2.availableDays);
-  chai.expect(availability1.earliestTimeInMinutes).to.equal(availability2.earliestTimeInMinutes);
+const assertAvailabilityEqual = (
+  availability1: AvailabilityStruct,
+  availability2: AvailabilityStruct
+) => {
+  chai
+    .expect(availability1.availableDays)
+    .to.equal(availability2.availableDays);
+  chai
+    .expect(availability1.earliestTimeInMinutes)
+    .to.equal(availability2.earliestTimeInMinutes);
   chai.expect(availability1.location).to.equal(availability2.location);
-  chai.expect(availability1.minutesAvailable).to.equal(availability2.minutesAvailable);
+  chai
+    .expect(availability1.minutesAvailable)
+    .to.equal(availability2.minutesAvailable);
   chai.expect(availability1.timeZone).to.equal(availability2.timeZone);
-}
+};
 
 describe("CalendarFactory", () => {
   let calendarFactory: CalendarFactory;

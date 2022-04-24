@@ -1,11 +1,25 @@
 import { ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { ethers } from "hardhat";
 import chai from "chai";
-import { CalendarFactory, CalendarFactory__factory } from "typechain-types";
+import {
+  CalendarFactory,
+  CalendarFactory__factory,
+  Calendar__factory,
+} from "typechain-types";
 import {
   AvailabilityStruct,
   ProfileStruct,
 } from "typechain-types/CalendarFactory";
+
+enum DayOfWeek {
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+}
 
 enum DaysOfWeek {
   None = 0,
@@ -79,12 +93,12 @@ const cal3Config = {
 const deployCalendarFactory = async (deployer: Signer) =>
   await new CalendarFactory__factory(deployer).deploy();
 
-async function deployCalendar(
+const deployCalendar = async (
   calendarFactory: CalendarFactory,
   signer: Signer,
   { profile, availability }: CalendarConfig
-) {
-  let tx: ContractTransaction = await calendarFactory
+) => {
+  let tx = await calendarFactory
     .connect(signer)
     .createCalendar(profile, availability);
   let receipt: ContractReceipt = await tx.wait();
@@ -98,10 +112,12 @@ async function deployCalendar(
   );
   chai.expect(calendarAddr).to.equal(calendarAddressFromMapping);
 
-  return await ethers.getContractAt("Calendar", calendarAddr);
-}
+  return Calendar__factory.connect(calendarAddr, signer);
+};
 
 export {
+  DayOfWeek,
+  DaysOfWeek,
   cal1Config,
   cal2Config,
   cal3Config,

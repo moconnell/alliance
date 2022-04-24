@@ -1,11 +1,6 @@
 import { ethers } from "hardhat";
-import { Contract, Signer } from "ethers";
-import {
-  Calendar,
-  CalendarFactory,
-  CalendarFactory__factory,
-  Calendar__factory,
-} from "../typechain-types";
+import { Signer } from "ethers";
+import { Calendar, CalendarFactory } from "../typechain-types";
 import chai from "chai";
 import {
   cal1Config,
@@ -13,17 +8,9 @@ import {
   cal3Config,
   deployCalendarFactory,
   deployCalendar,
+  DayOfWeek,
+  DaysOfWeek,
 } from "./helpers";
-
-enum DayOfWeek {
-  Sunday,
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-}
 
 const addDays = (date: Date, days: number) => {
   let date1 = new Date(date);
@@ -59,6 +46,34 @@ describe("Calendar", () => {
     cal1 = await deployCalendar(calendarFactory, signer1, cal1Config);
     cal2 = await deployCalendar(calendarFactory, signer2, cal2Config);
     cal3 = await deployCalendar(calendarFactory, signer3, cal3Config);
+  });
+
+  it("sets profile", async () => {
+    const email = "my_new_email@new-provider.com";
+    let newProfile = { ...cal1Config.profile, email };
+    await cal1.setProfile(newProfile);
+    const chainProfile = await cal1.profile();
+    chai.expect(chainProfile.email).to.equal(email);
+  });
+
+  it("sets availability", async () => {
+    const availableDays = DaysOfWeek.Thursday | DaysOfWeek.Friday;
+    let newAvailability = { ...cal1Config.availability, availableDays };
+    await cal1.setAvailability(newAvailability);
+    const chainAvailability = await cal1.availability();
+    chai.expect(chainAvailability.availableDays).to.equal(availableDays);
+  });
+
+  it("sets profile, availability", async () => {
+    const email = "my_new_email@new-provider.com";
+    let newProfile = { ...cal1Config.profile, email };
+    const availableDays = DaysOfWeek.Thursday | DaysOfWeek.Friday;
+    let newAvailability = { ...cal1Config.availability, availableDays };
+    await cal1.setProfileAvailability(newProfile, newAvailability);
+    const chainProfile = await cal1.profile();
+    chai.expect(chainProfile.email).to.equal(email);
+    const chainAvailability = await cal1.availability();
+    chai.expect(chainAvailability.availableDays).to.equal(availableDays);
   });
 
   it("books meetings with others within the available hours", async function () {
