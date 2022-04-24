@@ -1,5 +1,4 @@
 import { ContractReceipt, ContractTransaction, Signer } from "ethers";
-import { ethers } from "hardhat";
 import chai from "chai";
 import {
   CalendarFactory,
