@@ -35,7 +35,7 @@ task("artefacts", "Prints the list of artefacts", async (args, hre) => {
         console.log(artefactPath, contractName);
         try {
           const artefact = await hre.artifacts.readArtifact(contractName);
-          console.log(artefact);          
+          console.log(artefact);
         } catch (error) {
           console.error(error);
         }
@@ -53,7 +53,15 @@ const config: HardhatUserConfig = {
       url: ROPSTEN_URL,
     },
   },
-  solidity: "0.8.9", // latest supported as of 2022-05-04, see https://hardhat.org/reference/solidity-support.html
+  solidity: {
+    version: "0.8.9", // latest supported as of 2022-05-04, see https://hardhat.org/reference/solidity-support.html,
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
 };
 
 export default config;
