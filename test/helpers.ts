@@ -29,8 +29,8 @@ enum DaysOfWeek {
   Thursday = 1 << 4,
   Friday = 1 << 5,
   Saturday = 1 << 6,
-  SunThu = Monday | Tuesday | Wednesday | Thursday | Sunday,
-  All = SunThu | Friday | Saturday,
+  MonFri = Monday | Tuesday | Wednesday | Thursday | Friday,
+  All = MonFri | Saturday | Sunday,
 }
 
 type CalendarConfig = {
@@ -47,7 +47,7 @@ const cal1Config = {
     description: "performance artist",
   },
   availability: {
-    availableDays: DaysOfWeek.SunThu,
+    availableDays: DaysOfWeek.MonFri,
     location: "New York",
     timeZone: "America/New_York",
     earliestStartMinutes: 9 * 60 + 30, //  09:30
@@ -64,7 +64,7 @@ const cal2Config = {
     description: "personal trainer",
   },
   availability: {
-    availableDays: DaysOfWeek.SunThu,
+    availableDays: DaysOfWeek.MonFri,
     location: "Sydney",
     timeZone: "Australia/Sydney",
     earliestStartMinutes: 8 * 60, // 08:00

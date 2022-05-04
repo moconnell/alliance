@@ -76,30 +76,30 @@ describe("Calendar", () => {
     chai.expect(chainAvailability.availableDays).to.equal(availableDays);
   });
 
-  const slotsTestData = [
+  const timesTestData = [
     {
-      name: "get cal1 available meeting slots when no other meetings",
+      name: "get cal1 available meeting times when no other meetings",
       calendar: 1,
       meetings: [],
       duration: 60,
       expected: [570, 630, 690, 750, 810, 870, 930, 990],
     },
     {
-      name: "get cal1 available meeting slots when one other meeting",
+      name: "get cal1 available meeting times when one other meeting",
       calendar: 1,
       meetings: [{ hour: 10, min: 30, duration: 60 }],
       duration: 60,
       expected: [570, 690, 750, 810, 870, 930, 990],
     },
     {
-      name: "get cal2 available meeting slots when no other meetings",
+      name: "get cal2 available meeting times when no other meetings",
       calendar: 2,
       meetings: [],
       duration: 60,
       expected: [480, 540, 600, 660, 720, 780, 840, 900, 960],
     },
     {
-      name: "get cal2 available meeting slots when one other meeting",
+      name: "get cal2 available meeting times when one other meeting",
       calendar: 2,
       meetings: [
         { hour: 10, min: 0, duration: 60 },
@@ -109,21 +109,21 @@ describe("Calendar", () => {
       expected: [480, 540, 660, 720, 780, 840, 960],
     },
     {
-      name: "return no available meeting slots for date in the past",
+      name: "return no available meeting times for date in the past",
       calendar: 2,
       date: [1999, 12, 31],
       duration: 60,
       expected: [],
     },
     {
-      name: "return no available meeting slots for unavailable day",
+      name: "return no available meeting times for unavailable day",
       calendar: 2,
       date: getNextYearMonthDay(DayOfWeek.Saturday),
       duration: 60,
       expected: [],
     },
     {
-      name: "reject meeting slots request with invalid date",
+      name: "reject meeting times request with invalid date",
       calendar: 2,
       date: [getNextYearMonthDay(DayOfWeek.Saturday)[0] + 1, 0, 29],
       duration: 60,
@@ -131,7 +131,7 @@ describe("Calendar", () => {
     },
   ];
 
-  slotsTestData.forEach(
+  timesTestData.forEach(
     ({ name, calendar, date, meetings, duration, expected, error }) =>
       it(`should ${name}`, async function () {
         const getCalendar = () => {
@@ -171,11 +171,11 @@ describe("Calendar", () => {
         if (error) {
           await chai
             .expect(
-              cal.connect(signer).getAvailableSlots(year, month, day, duration)
+              cal.connect(signer).getAvailableTimes(year, month, day, duration)
             )
             .to.be.revertedWith(error);
         } else {
-          const res2 = await cal.getAvailableSlots(year, month, day, duration);
+          const res2 = await cal.getAvailableTimes(year, month, day, duration);
           chai.expect(res2).to.be.instanceof(Array);
           chai.expect(res2.filter((x) => x > 0)).to.deep.equal(expected);
         }

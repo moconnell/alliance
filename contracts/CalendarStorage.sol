@@ -6,9 +6,9 @@ pragma solidity ^0.8.0;
 /// @param startMinutes Total number of minutes past midnight that the meeting starts.
 /// @param durationMinutes Duration of the meeting in minutes.
 struct Meeting {
+  address attendee; // 20 bytes
   uint16 startMinutes; // 2 byte
   uint16 durationMinutes; // 2 bytes
-  address attendee; // 20 bytes
 }
 
 /// @notice The profile info of the calendar owner.
@@ -32,11 +32,11 @@ struct Profile {
 /// @param earliestStartMinutes earliest time in total minutes past midnight at which meetings can be booked.
 /// @param minutesAvailable period in minutes starting at the earliest time in which meetings can be booked.
 struct Availability {
+  string location;
+  string timeZone;
   uint8 availableDays;
   uint16 earliestStartMinutes;
   uint16 minutesAvailable;
-  string location;
-  string timeZone;
 }
 
 /// @title Storage of a calendar.

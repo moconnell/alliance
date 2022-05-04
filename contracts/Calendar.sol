@@ -1,24 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./CalendarStorage.sol";
+import "./CalendarUtils.sol";
+import "./CustomOwnable.sol";
 import "./DateTime.sol";
-
-/// @title A custom ownable implementation.
-/// @notice Provides a function modifier that allows only the owner to execute the function.
-/// @dev A custom implementation is used here (in contrast to OpenZepplin) to allow clones to be ownable.
-abstract contract CustomOwnable is ContextUpgradeable {
-  /// @notice Address of the owner.
-  address public owner;
-
-  /// @dev Throws if called by any account other than the owner.
-  modifier onlyOwner() {
-    require(owner == _msgSender(), "Caller is not the owner.");
-    _;
-  }
-}
 
 /// @title The calendar logic.
 /// @notice Contains functions and events to initialize the calendar and to book and cancel meetings.
@@ -92,12 +78,12 @@ contract Calendar is CalendarStorage, CustomOwnable {
     profile = _profile;
   }
 
-  /// @notice Gets available meeting slots on a given day.
+  /// @notice Gets available meeting times on a given day.
   /// @param _year Year the meeting starts.
   /// @param _month Month the meeting starts.
   /// @param _day Day the meeting starts.
   /// @param _duration Duration of the meeting in minutes.
-  function getAvailableSlots(
+  function getAvailableTimes(
     uint256 _year,
     uint256 _month,
     uint256 _day,
@@ -108,58 +94,18 @@ contract Calendar is CalendarStorage, CustomOwnable {
       "Date is not valid."
     );
 
-    uint256 maxLength = availability.minutesAvailable / _duration;
-    uint16[] memory slots = new uint16[](maxLength);
+    Meeting[] memory existingMeetingsOnDate = getMeetings(_year, _month, _day);
 
-    uint256 timestamp = DateTime.timestampFromDateTime(
+    uint16[] memory times = CalendarUtils.getAvailableTimes(
       _year,
       _month,
       _day,
-      0,
-      0,
-      0
+      _duration,
+      availability,
+      existingMeetingsOnDate
     );
-    if (timestamp < block.timestamp) {
-      return slots;
-    }
 
-    uint256 dayOfWeek = 1 << (DateTime.getDayOfWeek(timestamp) - 1);
-    if (availability.availableDays & dayOfWeek != dayOfWeek) {
-      return slots;
-    }
-
-    // TODO: check existing meetings on the previous day
-
-    Meeting[] memory existingMeetingsOnDate = dateToMeetings[_year][_month][
-      _day
-    ];
-    uint16 startMinute = availability.earliestStartMinutes;
-    uint16 otherStartMinute;
-    uint256 s = 0;
-
-    for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
-      Meeting memory other = existingMeetingsOnDate[i];
-
-      while (startMinute + _duration <= other.startMinutes) {
-        slots[s++] = startMinute;
-        startMinute += _duration;
-      }
-
-      startMinute = other.startMinutes + other.durationMinutes;
-    }
-
-    otherStartMinute =
-      availability.earliestStartMinutes +
-      availability.minutesAvailable;
-
-    while (startMinute + _duration <= otherStartMinute) {
-      slots[s++] = startMinute;
-      startMinute += _duration;
-    }
-
-    // TODO: check existing meetings on the next day
-
-    return slots;
+    return times;
   }
 
   /// @notice Books a meeting.
@@ -211,9 +157,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
     );
     require(timestamp > block.timestamp, "Cannot book meeting in the past");
 
-    uint256 dayOfWeek = 1 << (DateTime.getDayOfWeek(timestamp) - 1);
     require(
-      availability.availableDays & dayOfWeek == dayOfWeek,
+      CalendarUtils.timestampIsAvailableDay(
+        timestamp,
+        availability.availableDays
+      ),
       "Day not available."
     );
 
@@ -262,9 +210,8 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _duration
   ) internal view {
     // Compare existing meetings on the same day for collisions
-    Meeting[] memory existingMeetingsOnDate = dateToMeetings[_year][_month][
-      _day
-    ];
+    Meeting[] memory existingMeetingsOnDate = getMeetings(_year, _month, _day);
+
     for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
       Meeting memory other = existingMeetingsOnDate[i];
       uint16 otherEndMinute = other.startMinutes + other.durationMinutes;
@@ -283,15 +230,14 @@ contract Calendar is CalendarStorage, CustomOwnable {
   /// @param _startMinute Minute the meeting starts.
   /// @param _days The number of days after day 0 (1970/01/01).
   function _checkPrevDay(uint256 _startMinute, uint256 _days) internal view {
-    (uint256 prevYear, uint256 prevMonth, uint256 prevDay) = DateTime
-      ._daysToDate(_days - 1);
+    (uint256 year, uint256 month, uint256 day) = DateTime._daysToDate(
+      _days - 1
+    );
 
-    Meeting[] memory existingMeetingsOnPrevDay = dateToMeetings[prevYear][
-      prevMonth
-    ][prevDay];
+    Meeting[] memory existingMeetingsPrevDay = getMeetings(year, month, day);
 
-    for (uint256 i = 0; i < existingMeetingsOnPrevDay.length; i++) {
-      Meeting memory other = existingMeetingsOnPrevDay[i];
+    for (uint256 i = 0; i < existingMeetingsPrevDay.length; i++) {
+      Meeting memory other = existingMeetingsPrevDay[i];
 
       uint16 otherEndMinute = other.startMinutes + other.durationMinutes;
 
@@ -307,18 +253,18 @@ contract Calendar is CalendarStorage, CustomOwnable {
   /// @param _endMinute Minute the meeting ends.
   /// @param _days The number of days after day 0 (1970/01/01).
   function _checkNextDay(uint256 _endMinute, uint256 _days) internal view {
-    (uint256 nextYear, uint256 nextMonth, uint256 nextDay) = DateTime
-      ._daysToDate(_days + 1);
+    (uint256 year, uint256 month, uint256 day) = DateTime._daysToDate(
+      _days + 1
+    );
 
-    Meeting[] memory existingMeetingsOnNextDay = dateToMeetings[nextYear][
-      nextMonth
-    ][nextDay];
+    Meeting[] memory existingMeetingsNextDay = getMeetings(year, month, day);
 
-    for (uint256 i = 0; i < existingMeetingsOnNextDay.length; i++) {
-      Meeting memory other = existingMeetingsOnNextDay[i];
-
+    for (uint256 i = 0; i < existingMeetingsNextDay.length; i++) {
       // check if the other meeting ends before the new one starts
-      require(_endMinute <= other.startMinutes, "Overlaps meeting next day");
+      require(
+        _endMinute <= existingMeetingsNextDay[i].startMinutes,
+        "Overlaps meeting next day"
+      );
     }
   }
 
@@ -347,17 +293,14 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _arrayPosition
   ) external {
     // search for the meeting position in the meetings array
-    uint256 length = dateToMeetings[_year][_month][_day].length;
+    Meeting[] memory meetingsOnDay = getMeetings(_year, _month, _day);
 
+    uint256 length = meetingsOnDay.length;
     require(_arrayPosition < length, "Meeting does not exist.");
 
-    Meeting memory meeting = dateToMeetings[_year][_month][_day][_arrayPosition];
+    Meeting memory meeting = meetingsOnDay[_arrayPosition];
 
-    require(
-      msg.sender ==
-        meeting.attendee,
-      "Not your booking!"
-    );
+    require(msg.sender == meeting.attendee, "Not your booking!");
 
     emit MeetingCancelled(
       msg.sender,
@@ -370,9 +313,9 @@ contract Calendar is CalendarStorage, CustomOwnable {
     );
 
     // remove element by overwriting it with the last element
-    dateToMeetings[_year][_month][_day][_arrayPosition] = dateToMeetings[_year][
-      _month
-    ][_day][length - 1];
+    dateToMeetings[_year][_month][_day][_arrayPosition] = meetingsOnDay[
+      length - 1
+    ];
     dateToMeetings[_year][_month][_day].pop();
   }
 }
