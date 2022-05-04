@@ -2,14 +2,13 @@
 pragma solidity ^0.8.0;
 
 /// @notice Contains the information of a meeting.
-/// @param hour Hour the meeting starts.
-/// @param minute Minunte the meeting starts.
-/// @param duration Duration of the meeting in minutes.
+/// @param address Address of the attendee of the meeting.
+/// @param startMinutes Total number of minutes past midnight that the meeting starts.
+/// @param durationMinutes Duration of the meeting in minutes.
 struct Meeting {
-  address attendee; // 32 bytes
-  uint16 hour; // 2 bytes
-  uint16 minute; // 2 bytes
-  uint16 duration; // 2 bytes
+  uint16 startMinutes; // 2 byte
+  uint16 durationMinutes; // 2 bytes
+  address attendee; // 20 bytes
 }
 
 /// @notice The profile info of the calendar owner.
@@ -30,14 +29,14 @@ struct Profile {
 /// @param location location of the calendar owner.
 /// @param timeZone time-zone of the calendar owner.
 /// @param availableDays bit mask specifying on which days meetings can be booked (Sunday = 1 << 0; Saturday = 1 << 6)
-/// @param earliestTimeInMinutes earliest time in total minutes at which meetings can be booked.
+/// @param earliestStartMinutes earliest time in total minutes past midnight at which meetings can be booked.
 /// @param minutesAvailable period in minutes starting at the earliest time in which meetings can be booked.
 struct Availability {
+  uint8 availableDays;
+  uint16 earliestStartMinutes;
+  uint16 minutesAvailable;
   string location;
   string timeZone;
-  uint8 availableDays;
-  uint16 earliestTimeInMinutes;
-  uint16 minutesAvailable;
 }
 
 /// @title Storage of a calendar.

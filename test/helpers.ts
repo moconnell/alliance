@@ -50,8 +50,8 @@ const cal1Config = {
     availableDays: DaysOfWeek.SunThu,
     location: "New York",
     timeZone: "America/New_York",
-    earliestTimeInMinutes: 9 * 60 + 30, //  9:30 UTC
-    minutesAvailable: 8 * 60, // 16:30 UTC
+    earliestStartMinutes: 9 * 60 + 30, //  09:30
+    minutesAvailable: 8 * 60, // 17:30
   },
 };
 
@@ -67,8 +67,8 @@ const cal2Config = {
     availableDays: DaysOfWeek.SunThu,
     location: "Sydney",
     timeZone: "Australia/Sydney",
-    earliestTimeInMinutes: 8 * 60, // 8:00 UTC
-    minutesAvailable: 9 * 60, // 16:00 UTC
+    earliestStartMinutes: 8 * 60, // 08:00
+    minutesAvailable: 9 * 60, // 17:00
   },
 };
 
@@ -84,8 +84,8 @@ const cal3Config = {
     availableDays: DaysOfWeek.All,
     location: "London",
     timeZone: "Europe/London",
-    earliestTimeInMinutes: 18 * 60, //  16:00 UTC
-    minutesAvailable: 8 * 60, // 2:00 UTC + 1 day
+    earliestStartMinutes: 18 * 60, //  16:00
+    minutesAvailable: 8 * 60, // 02:00 +1 day
   },
 };
 
@@ -100,7 +100,7 @@ const deployCalendar = async (
   let tx = await calendarFactory
     .connect(signer)
     .createCalendar(profile, availability);
-  let receipt: ContractReceipt = await tx.wait();
+  let receipt = await tx.wait();
   const txEvent = receipt.events?.[0]?.args;
   let ownerAddr = txEvent?.owner;
   let calendarAddr = txEvent?.calendar;

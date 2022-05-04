@@ -92,6 +92,76 @@ contract Calendar is CalendarStorage, CustomOwnable {
     profile = _profile;
   }
 
+  /// @notice Gets available meeting slots on a given day.
+  /// @param _year Year the meeting starts.
+  /// @param _month Month the meeting starts.
+  /// @param _day Day the meeting starts.
+  /// @param _duration Duration of the meeting in minutes.
+  function getAvailableSlots(
+    uint256 _year,
+    uint256 _month,
+    uint256 _day,
+    uint16 _duration
+  ) public view returns (uint16[] memory) {
+    require(
+      DateTime.isValidDateTime(_year, _month, _day, 0, 0, 0),
+      "Date is not valid."
+    );
+
+    uint256 maxLength = availability.minutesAvailable / _duration;
+    uint16[] memory slots = new uint16[](maxLength);
+
+    uint256 timestamp = DateTime.timestampFromDateTime(
+      _year,
+      _month,
+      _day,
+      0,
+      0,
+      0
+    );
+    if (timestamp < block.timestamp) {
+      return slots;
+    }
+
+    uint256 dayOfWeek = 1 << (DateTime.getDayOfWeek(timestamp) - 1);
+    if (availability.availableDays & dayOfWeek != dayOfWeek) {
+      return slots;
+    }
+
+    // TODO: check existing meetings on the previous day
+
+    Meeting[] memory existingMeetingsOnDate = dateToMeetings[_year][_month][
+      _day
+    ];
+    uint16 startMinute = availability.earliestStartMinutes;
+    uint16 otherStartMinute;
+    uint256 s = 0;
+
+    for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
+      Meeting memory other = existingMeetingsOnDate[i];
+
+      while (startMinute + _duration <= other.startMinutes) {
+        slots[s++] = startMinute;
+        startMinute += _duration;
+      }
+
+      startMinute = other.startMinutes + other.durationMinutes;
+    }
+
+    otherStartMinute =
+      availability.earliestStartMinutes +
+      availability.minutesAvailable;
+
+    while (startMinute + _duration <= otherStartMinute) {
+      slots[s++] = startMinute;
+      startMinute += _duration;
+    }
+
+    // TODO: check existing meetings on the next day
+
+    return slots;
+  }
+
   /// @notice Books a meeting.
   /// @param _year Year the meeting starts.
   /// @param _month Month the meeting starts.
@@ -103,9 +173,9 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _year,
     uint256 _month,
     uint256 _day,
-    uint16 _hour,
-    uint16 _minute,
-    uint16 _duration
+    uint256 _hour,
+    uint256 _minute,
+    uint256 _duration
   ) public {
     require(msg.sender != owner, "Cannot book meeting with self");
     require(
@@ -113,19 +183,19 @@ contract Calendar is CalendarStorage, CustomOwnable {
       "Date and time are not valid."
     );
 
-    uint16 startMinute = _hour * 60 + _minute;
-    uint16 endMinute = startMinute + _duration;
+    uint256 startMinute = _hour * 60 + _minute;
+    uint256 endMinute = startMinute + _duration;
 
-    if (availability.earliestTimeInMinutes <= startMinute)
+    if (availability.earliestStartMinutes <= startMinute)
       require(
-        endMinute - availability.earliestTimeInMinutes <=
+        endMinute - availability.earliestStartMinutes <=
           availability.minutesAvailable,
         "Time not available."
       );
     else {
       // overnight case
       require(
-        endMinute + 1440 - availability.earliestTimeInMinutes <=
+        endMinute + 1440 - availability.earliestStartMinutes <=
           availability.minutesAvailable,
         "Time not available."
       );
@@ -162,9 +232,8 @@ contract Calendar is CalendarStorage, CustomOwnable {
     dateToMeetings[_year][_month][_day].push(
       Meeting({
         attendee: msg.sender,
-        hour: _hour,
-        minute: _minute,
-        duration: _duration
+        startMinutes: uint16(_hour * 60 + _minute),
+        durationMinutes: uint16(_duration)
       })
     );
 
@@ -189,21 +258,22 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _year,
     uint256 _month,
     uint256 _day,
-    uint16 _startMinute,
-    uint16 _duration
+    uint256 _startMinute,
+    uint256 _duration
   ) internal view {
     // Compare existing meetings on the same day for collisions
-    for (uint256 i = 0; i < dateToMeetings[_year][_month][_day].length; i++) {
-      Meeting memory other = dateToMeetings[_year][_month][_day][i];
-
-      uint16 otherStartMinute = other.hour * 60 + other.minute;
-      uint16 otherEndMinute = otherStartMinute + other.duration;
+    Meeting[] memory existingMeetingsOnDate = dateToMeetings[_year][_month][
+      _day
+    ];
+    for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
+      Meeting memory other = existingMeetingsOnDate[i];
+      uint16 otherEndMinute = other.startMinutes + other.durationMinutes;
 
       // check if the other meeting ends before the new meeting starts
       // or if the new meeting ends before the other meeting starts
       require(
         otherEndMinute <= _startMinute ||
-          _startMinute + _duration <= otherStartMinute,
+          _startMinute + _duration <= other.startMinutes,
         "Overlap with existing meeting."
       );
     }
@@ -212,42 +282,43 @@ contract Calendar is CalendarStorage, CustomOwnable {
   /// @notice Checks if a meeting collides with a meeting on the previous day.
   /// @param _startMinute Minute the meeting starts.
   /// @param _days The number of days after day 0 (1970/01/01).
-  function _checkPrevDay(uint16 _startMinute, uint256 _days) internal view {
+  function _checkPrevDay(uint256 _startMinute, uint256 _days) internal view {
     (uint256 prevYear, uint256 prevMonth, uint256 prevDay) = DateTime
       ._daysToDate(_days - 1);
 
-    for (
-      uint256 i = 0;
-      i < dateToMeetings[prevYear][prevMonth][prevDay].length;
-      i++
-    ) {
-      Meeting memory other = dateToMeetings[prevYear][prevMonth][prevDay][i];
+    Meeting[] memory existingMeetingsOnPrevDay = dateToMeetings[prevYear][
+      prevMonth
+    ][prevDay];
 
-      uint16 otherEndMinute = other.hour * 60 + other.minute + other.duration;
+    for (uint256 i = 0; i < existingMeetingsOnPrevDay.length; i++) {
+      Meeting memory other = existingMeetingsOnPrevDay[i];
+
+      uint16 otherEndMinute = other.startMinutes + other.durationMinutes;
 
       // check if the other meeting ends before the new one starts
-      require(otherEndMinute <= _startMinute, "Overlaps meeting previous day");
+      require(
+        otherEndMinute <= 1440 || otherEndMinute % 1440 <= _startMinute,
+        "Overlaps meeting previous day"
+      );
     }
   }
 
   /// @notice Checks if a meeting collides with a meeting on the next day.
   /// @param _endMinute Minute the meeting ends.
   /// @param _days The number of days after day 0 (1970/01/01).
-  function _checkNextDay(uint16 _endMinute, uint256 _days) internal view {
+  function _checkNextDay(uint256 _endMinute, uint256 _days) internal view {
     (uint256 nextYear, uint256 nextMonth, uint256 nextDay) = DateTime
       ._daysToDate(_days + 1);
 
-    for (
-      uint256 i = 0;
-      i < dateToMeetings[nextYear][nextMonth][nextDay].length;
-      i++
-    ) {
-      Meeting memory other = dateToMeetings[nextYear][nextMonth][nextDay][i];
+    Meeting[] memory existingMeetingsOnNextDay = dateToMeetings[nextYear][
+      nextMonth
+    ][nextDay];
 
-      uint16 otherStartMinute = other.hour * 60 + other.minute;
+    for (uint256 i = 0; i < existingMeetingsOnNextDay.length; i++) {
+      Meeting memory other = existingMeetingsOnNextDay[i];
 
       // check if the other meeting ends before the new one starts
-      require(_endMinute <= otherStartMinute, "Overlaps meeting next day");
+      require(_endMinute <= other.startMinutes, "Overlaps meeting next day");
     }
   }
 
@@ -280,9 +351,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
 
     require(_arrayPosition < length, "Meeting does not exist.");
 
+    Meeting memory meeting = dateToMeetings[_year][_month][_day][_arrayPosition];
+
     require(
       msg.sender ==
-        dateToMeetings[_year][_month][_day][_arrayPosition].attendee,
+        meeting.attendee,
       "Not your booking!"
     );
 
@@ -291,9 +364,9 @@ contract Calendar is CalendarStorage, CustomOwnable {
       _year,
       _month,
       _day,
-      dateToMeetings[_year][_month][_day][_arrayPosition].hour,
-      dateToMeetings[_year][_month][_day][_arrayPosition].minute,
-      dateToMeetings[_year][_month][_day][_arrayPosition].duration
+      meeting.startMinutes / 60,
+      meeting.startMinutes % 60,
+      meeting.durationMinutes
     );
 
     // remove element by overwriting it with the last element

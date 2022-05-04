@@ -42,8 +42,8 @@ contract CalendarFactory {
     Availability calldata _availability
   ) external {
     require(
-      _availability.earliestTimeInMinutes < MINUTES_PER_DAY,
-      "earliestTimeInMinutes > 24h"
+      _availability.earliestStartMinutes < MINUTES_PER_DAY,
+      "earliestStartMinutes > 24h"
     );
     require(
       _availability.minutesAvailable <= MINUTES_PER_DAY,

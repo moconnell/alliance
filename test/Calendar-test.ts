@@ -76,6 +76,112 @@ describe("Calendar", () => {
     chai.expect(chainAvailability.availableDays).to.equal(availableDays);
   });
 
+  const slotsTestData = [
+    {
+      name: "get cal1 available meeting slots when no other meetings",
+      calendar: 1,
+      meetings: [],
+      duration: 60,
+      expected: [570, 630, 690, 750, 810, 870, 930, 990],
+    },
+    {
+      name: "get cal1 available meeting slots when one other meeting",
+      calendar: 1,
+      meetings: [{ hour: 10, min: 30, duration: 60 }],
+      duration: 60,
+      expected: [570, 690, 750, 810, 870, 930, 990],
+    },
+    {
+      name: "get cal2 available meeting slots when no other meetings",
+      calendar: 2,
+      meetings: [],
+      duration: 60,
+      expected: [480, 540, 600, 660, 720, 780, 840, 900, 960],
+    },
+    {
+      name: "get cal2 available meeting slots when one other meeting",
+      calendar: 2,
+      meetings: [
+        { hour: 10, min: 0, duration: 60 },
+        { hour: 15, min: 0, duration: 60 },
+      ],
+      duration: 60,
+      expected: [480, 540, 660, 720, 780, 840, 960],
+    },
+    {
+      name: "return no available meeting slots for date in the past",
+      calendar: 2,
+      date: [1999, 12, 31],
+      duration: 60,
+      expected: [],
+    },
+    {
+      name: "return no available meeting slots for unavailable day",
+      calendar: 2,
+      date: getNextYearMonthDay(DayOfWeek.Saturday),
+      duration: 60,
+      expected: [],
+    },
+    {
+      name: "reject meeting slots request with invalid date",
+      calendar: 2,
+      date: [getNextYearMonthDay(DayOfWeek.Saturday)[0] + 1, 0, 29],
+      duration: 60,
+      error: "Date and time are not valid.",
+    },
+  ];
+
+  slotsTestData.forEach(
+    ({ name, calendar, date, meetings, duration, expected, error }) =>
+      it(`should ${name}`, async function () {
+        const getCalendar = () => {
+          switch (calendar) {
+            case 1:
+              return { cal: cal1, signer: signer2 };
+            case 2:
+              return { cal: cal2, signer: signer1 };
+            case 3:
+              return { cal: cal3, signer: signer2 };
+            default:
+              throw new Error(`Unknown calendar: ${calendar}`);
+          }
+        };
+        const { cal, signer } = getCalendar();
+        const [year, month, day] =
+          date ?? getNextYearMonthDay(DayOfWeek.Monday);
+
+        if (meetings) {
+          const res0 = await cal.getMeetings(year, month, day);
+          chai.expect(res0).to.be.instanceof(Array);
+          chai.expect(res0).to.have.length(0);
+
+          await Promise.all(
+            meetings.map(async ({ hour, min, duration }) => {
+              await cal
+                .connect(signer)
+                .bookMeeting(year, month, day, hour, min, duration);
+            })
+          );
+
+          const res1 = await cal.getMeetings(year, month, day);
+          chai.expect(res1).to.be.instanceof(Array);
+          chai.expect(res1).to.have.length(meetings.length);
+        }
+
+        if (error) {
+          await chai
+            .expect(
+              cal.connect(signer).getAvailableSlots(year, month, day, duration)
+            )
+            .to.be.revertedWith(error);
+        } else {
+          const res2 = await cal.getAvailableSlots(year, month, day, duration);
+          chai.expect(res2).to.be.instanceof(Array);
+          chai.expect(res2.filter((x) => x > 0)).to.deep.equal(expected);
+        }
+      })
+  );
+
   it("books meetings with others within the available hours", async function () {
     const [year, month, day] = getNextYearMonthDay(DayOfWeek.Monday);
     const signer1Address = await signer1.getAddress();
@@ -96,9 +202,8 @@ describe("Calendar", () => {
     chai.expect(res1).to.have.length(1);
 
     chai.expect(res1[0].attendee).to.equal(signer1Address);
-    chai.expect(res1[0].hour).to.equal(hour1);
-    chai.expect(res1[0].minute).to.equal(min1);
-    chai.expect(res1[0].duration).to.deep.equal(duration);
+    chai.expect(res1[0].startMinutes).to.equal(hour1 * 60 + min1);
+    chai.expect(res1[0].durationMinutes).to.equal(duration);
 
     const [hour2, min2] = [15, 30];
     await cal2
@@ -109,13 +214,11 @@ describe("Calendar", () => {
     chai.expect(res2).to.have.length(2);
 
     chai.expect(res2[0].attendee).to.equal(signer1Address);
-    chai.expect(res2[0].hour).to.equal(hour1);
-    chai.expect(res2[0].minute).to.equal(min1);
-    chai.expect(res2[0].duration).to.deep.equal(duration);
+    chai.expect(res2[0].startMinutes).to.equal(hour1 * 60 + min1);
+    chai.expect(res2[0].durationMinutes).to.deep.equal(duration);
     chai.expect(res2[1].attendee).to.equal(signer1Address);
-    chai.expect(res2[1].hour).to.equal(hour2);
-    chai.expect(res2[1].minute).to.equal(min2);
-    chai.expect(res2[1].duration).to.deep.equal(duration);
+    chai.expect(res2[1].startMinutes).to.equal(hour2 * 60 + min2);
+    chai.expect(res2[1].durationMinutes).to.deep.equal(duration);
   });
 
   it("cancels owned meetings", async function () {

@@ -32,8 +32,8 @@ const assertAvailabilityEqual = (
     .expect(availability1.availableDays)
     .to.equal(availability2.availableDays);
   chai
-    .expect(availability1.earliestTimeInMinutes)
-    .to.equal(availability2.earliestTimeInMinutes);
+    .expect(availability1.earliestStartMinutes)
+    .to.equal(availability2.earliestStartMinutes);
   chai.expect(availability1.location).to.equal(availability2.location);
   chai
     .expect(availability1.minutesAvailable)
