@@ -101,11 +101,14 @@ const deployCalendar = async (
     .connect(signer)
     .createCalendar(profile, availability);
   let receipt = await tx.wait();
-  const txEvent = receipt.events?.[0]?.args;
-  let ownerAddr = txEvent?.owner;
-  let calendarAddr = txEvent?.calendar;
+  
+  const txEvent = receipt.events![1].args;
+  chai.expect(txEvent).not.to.be.undefined;
 
+  let ownerAddr = txEvent!.owner;
+  let calendarAddr = txEvent!.calendar;
   chai.expect(ownerAddr).to.equal(await signer.getAddress());
+
   const calendarAddressFromMapping = await calendarFactory.userToCalendar(
     ownerAddr
   );
