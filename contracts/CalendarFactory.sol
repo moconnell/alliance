@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
 import "./Calendar.sol";
 import "./CalendarStorage.sol";
+import "./CalendarTypes.sol";
 
 /// @title Calendar Factory
 /// @notice The factory deploys and removes calendars and manages assigns their ownership.
@@ -38,8 +39,8 @@ contract CalendarFactory {
   /// @param _profile The profile of the calendar owner.
   /// @param _availability The availability of the calendar owner.
   function createCalendar(
-    Profile calldata _profile,
-    Availability calldata _availability
+    CalendarTypes.Profile calldata _profile,
+    CalendarTypes.Availability calldata _availability
   ) external {
     require(
       _availability.earliestStartMinutes < MINUTES_PER_DAY,

@@ -2,24 +2,30 @@
 pragma solidity ^0.8.0;
 
 import "./CalendarStorage.sol";
+import "./CalendarTypes.sol";
 import "./DateTime.sol";
 
 library CalendarUtils {
-  function daysOfWeekFromTimestamp(uint256 timestamp)
+  /// @notice converts a timestamp's day to a bit mask value (Sunday = 1 << 0; Saturday = 1 << 6)
+  /// @param _timestamp timestamp to evaluate
+  function daysOfWeekFromTimestamp(uint256 _timestamp)
     internal
     pure
     returns (uint256 daysOfWeek)
   {
-    daysOfWeek = 1 << (DateTime.getDayOfWeek(timestamp) % 7);
+    daysOfWeek = 1 << (DateTime.getDayOfWeek(_timestamp) % 7);
   }
 
-  function timestampIsAvailableDay(uint256 timestamp, uint8 availableDays)
+  /// @notice Gets available meeting times on a given day.
+  /// @param _timestamp timestamp to evaluate
+  /// @param _availableDays "DaysOfWeek" bit mask value
+  function timestampIsAvailableDay(uint256 _timestamp, uint8 _availableDays)
     internal
     pure
     returns (bool isAvailableDay)
   {
-    uint256 daysOfWeek = daysOfWeekFromTimestamp(timestamp);
-    isAvailableDay = availableDays & daysOfWeek == daysOfWeek;
+    uint256 daysOfWeek = daysOfWeekFromTimestamp(_timestamp);
+    isAvailableDay = _availableDays & daysOfWeek == daysOfWeek;
   }
 
   /// @notice Gets available meeting times on a given day.
@@ -32,13 +38,10 @@ library CalendarUtils {
     uint256 _month,
     uint256 _day,
     uint16 _duration,
-    Availability storage _availability,
-    Meeting[] memory existingMeetingsOnDate
-  ) internal view returns (uint16[] memory) {
-    uint256 maxLength = _availability.minutesAvailable / _duration;
-    uint16[] memory times = new uint16[](maxLength);
-
-    uint256 timestamp = DateTime.timestampFromDateTime(
+    CalendarTypes.Availability memory _availability,
+    CalendarTypes.Meeting[] memory existingMeetingsOnDate
+  ) internal view returns (CalendarTypes.TimeArray memory) {
+    uint256 _timestamp = DateTime.timestampFromDateTime(
       _year,
       _month,
       _day,
@@ -46,28 +49,28 @@ library CalendarUtils {
       0,
       0
     );
-    if (timestamp < block.timestamp) {
-      return times;
+
+    require(_timestamp > block.timestamp, "Date is in the past");
+    
+    if (!timestampIsAvailableDay(_timestamp, _availability.availableDays)) {
+      return
+        CalendarTypes.TimeArray({
+          times: new int16[](0),
+          timeZone: _availability.timeZone
+        });
     }
 
-    if (
-      !CalendarUtils.timestampIsAvailableDay(
-        timestamp,
-        _availability.availableDays
-      )
-    ) {
-      return times;
-    }
-
+    uint256 maxLength = _availability.minutesAvailable / _duration;
+    int16[] memory times = new int16[](maxLength);
     uint16 startMinute = _availability.earliestStartMinutes;
     uint16 otherStartMinute;
     uint256 s = 0;
 
     for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
-      Meeting memory other = existingMeetingsOnDate[i];
+      CalendarTypes.Meeting memory other = existingMeetingsOnDate[i];
 
       while (startMinute + _duration <= other.startMinutes) {
-        times[s++] = startMinute;
+        times[s++] = int16(startMinute);
         startMinute += _duration;
       }
 
@@ -79,12 +82,19 @@ library CalendarUtils {
       _availability.minutesAvailable;
 
     while (startMinute + _duration <= otherStartMinute) {
-      times[s++] = startMinute;
+      times[s++] = int16(startMinute);
       startMinute += _duration;
     }
 
-    // TODO: check existing meetings on the next day
+    // cannot resize array, so fill in the blanks with "empty" value
+    while (s < maxLength) {
+      times[s++] = -1;
+    }
 
-    return times;
+    return
+      CalendarTypes.TimeArray({
+        times: times,
+        timeZone: _availability.timeZone
+      });
   }
 }
