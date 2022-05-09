@@ -57,8 +57,8 @@ const config: HardhatUserConfig = {
     version: "0.8.9", // latest supported as of 2022-05-04, see https://hardhat.org/reference/solidity-support.html,
     settings: {
       optimizer: {
-        enabled: true,
-        runs: 200,
+        enabled: false,
+        // runs: 200,
       },
     },
   },
