@@ -6,9 +6,9 @@ import {
   Calendar__factory,
 } from "../typechain-types";
 import {
-  AvailabilityStruct,
   ProfileStruct,
-} from "../typechain-types/CalendarFactory";
+  AvailabilityStruct,
+} from "typechain-types/CalendarFactory";
 
 enum DayOfWeek {
   Sunday,
@@ -101,7 +101,7 @@ const deployCalendar = async (
     .connect(signer)
     .createCalendar(profile, availability);
   let receipt = await tx.wait();
-  
+
   const txEvent = receipt.events![1].args;
   chai.expect(txEvent).not.to.be.undefined;
 
