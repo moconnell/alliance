@@ -5,10 +5,7 @@ import {
   CalendarFactory__factory,
   Calendar__factory,
 } from "../typechain-types";
-import {
-  ProfileStruct,
-  AvailabilityStruct,
-} from "typechain-types/CalendarFactory";
+import { AvailabilityStruct, ProfileStruct } from "../typechain-types/Calendar";
 
 enum DayOfWeek {
   Sunday,
