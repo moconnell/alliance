@@ -1,14 +1,14 @@
-import { ContractReceipt, ContractTransaction, Signer } from "ethers";
+import { Signer } from "ethers";
 import chai from "chai";
 import {
   CalendarFactory,
   CalendarFactory__factory,
   Calendar__factory,
-} from "typechain-types";
+} from "../typechain-types";
 import {
   AvailabilityStruct,
   ProfileStruct,
-} from "typechain-types/CalendarFactory";
+} from "../typechain-types/CalendarFactory";
 
 enum DayOfWeek {
   Sunday,
