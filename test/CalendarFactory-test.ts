@@ -8,14 +8,11 @@ import {
   deployCalendar,
 } from "./helpers";
 import { Calendar, CalendarFactory } from "typechain-types";
-import {
-  AvailabilityStruct,
-  ProfileStruct,
-} from "typechain-types/CalendarFactory";
+import { CalendarTypes } from "typechain-types/Calendar";
 
 const assertProfileEqual = (
-  profile1: ProfileStruct,
-  profile2: ProfileStruct
+  profile1: CalendarTypes.ProfileStruct,
+  profile2: CalendarTypes.ProfileStruct
 ) => {
   chai.expect(profile1.description).to.equal(profile2.description);
   chai.expect(profile1.email).to.equal(profile2.email);
@@ -25,8 +22,8 @@ const assertProfileEqual = (
 };
 
 const assertAvailabilityEqual = (
-  availability1: AvailabilityStruct,
-  availability2: AvailabilityStruct
+  availability1: CalendarTypes.AvailabilityStruct,
+  availability2: CalendarTypes.AvailabilityStruct
 ) => {
   chai
     .expect(availability1.availableDays)

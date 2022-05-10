@@ -1,11 +1,11 @@
 import { Signer } from "ethers";
 import chai from "chai";
 import {
-  CalendarFactory,
   CalendarFactory__factory,
+  CalendarFactory,
   Calendar__factory,
-} from "../typechain-types";
-import { AvailabilityStruct, ProfileStruct } from "../typechain-types/Calendar";
+} from "typechain-types";
+import { CalendarTypes } from "typechain-types/Calendar";
 
 enum DayOfWeek {
   Sunday,
@@ -31,8 +31,8 @@ enum DaysOfWeek {
 }
 
 type CalendarConfig = {
-  profile: ProfileStruct;
-  availability: AvailabilityStruct;
+  profile: CalendarTypes.ProfileStruct;
+  availability: CalendarTypes.AvailabilityStruct;
 };
 
 const cal1Config = {
@@ -99,7 +99,7 @@ const deployCalendar = async (
     .createCalendar(profile, availability);
   let receipt = await tx.wait();
 
-  const txEvent = receipt.events![1].args;
+  const txEvent = receipt.events![0].args;
   chai.expect(txEvent).not.to.be.undefined;
 
   let ownerAddr = txEvent!.owner;
