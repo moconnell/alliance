@@ -7,9 +7,9 @@ npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test  // runs tests, also reports contract bytecode size
-npx hardhat node. // start Hardhat localhost server
+npx hardhat node  // start Hardhat localhost server
 npx hardhat help
-npx hardhat coverage. // reports test coverage, gas usage
+npx hardhat coverage  // reports test coverage, gas usage
 npx hardhat run scripts/deploy.ts
 node scripts/deploy.ts
 npx eslint '**/*.ts'
