@@ -25,8 +25,11 @@ jobs:
     - run: npm ci
     - run: mv ./.env.github .env
     - run: npx hardhat compile
+    - run: ls -lrt ./typechain-types
     - name: Sleep for 3 seconds, to ensure that typechain-types directory is created
       run: sleep 3s
       shell: bash
+    - name: list contents of typechain-types directory
+      run: ls -lrt ./typechain-types
     - run: npx hardhat test
     - run: npx hardhat coverage

@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
-import { Calendar, CalendarFactory } from "../typechain-types";
+import { Calendar, CalendarFactory } from "typechain-types";
 import chai from "chai";
 import {
   cal1Config,
