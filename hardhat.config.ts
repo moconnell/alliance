@@ -3,6 +3,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "tsconfig-paths/register";
+import "hardhat-contract-sizer";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import * as dotenv from "dotenv";
@@ -62,6 +63,9 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  contractSizer : {
+    runOnCompile: true,
+  }
 };
 
 export default config;
