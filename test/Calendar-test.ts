@@ -1,5 +1,6 @@
 import { ethers } from "hardhat";
-import { Contract, Signer } from "ethers";
+import { Signer } from "ethers";
+import { Calendar, CalendarFactory } from "typechain-types";
 import chai from "chai";
 import {
   cal1Config,
@@ -7,17 +8,9 @@ import {
   cal3Config,
   deployCalendarFactory,
   deployCalendar,
+  DayOfWeek,
+  DaysOfWeek,
 } from "./helpers";
-
-enum DayOfWeek {
-  Sunday,
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-}
 
 const addDays = (date: Date, days: number) => {
   let date1 = new Date(date);
@@ -42,18 +35,158 @@ const toYearMonthDay = (date: Date) => [
   date.getDate(),
 ];
 
-describe("Calendar", function () {
-  let calendarFactory: Contract;
-  let cal1: Contract, cal2: Contract, cal3: Contract;
+describe("Calendar", () => {
+  let calendarFactory: CalendarFactory;
+  let cal1: Calendar, cal2: Calendar, cal3: Calendar;
   let signer1: Signer, signer2: Signer, signer3: Signer;
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     [signer1, signer2, signer3] = await ethers.getSigners();
     calendarFactory = await deployCalendarFactory(signer1);
     cal1 = await deployCalendar(calendarFactory, signer1, cal1Config);
     cal2 = await deployCalendar(calendarFactory, signer2, cal2Config);
     cal3 = await deployCalendar(calendarFactory, signer3, cal3Config);
   });
+
+  it("sets profile", async () => {
+    const email = "my_new_email@new-provider.com";
+    let newProfile = { ...cal1Config.profile, email };
+    await cal1.setProfile(newProfile);
+    const chainProfile = await cal1.profile();
+    chai.expect(chainProfile.email).to.equal(email);
+  });
+
+  it("sets availability", async () => {
+    const availableDays = DaysOfWeek.Thursday | DaysOfWeek.Friday;
+    let newAvailability = { ...cal1Config.availability, availableDays };
+    await cal1.setAvailability(newAvailability);
+    const chainAvailability = await cal1.availability();
+    chai.expect(chainAvailability.availableDays).to.equal(availableDays);
+  });
+
+  it("sets profile, availability", async () => {
+    const email = "my_new_email@new-provider.com";
+    let newProfile = { ...cal1Config.profile, email };
+    const availableDays = DaysOfWeek.Thursday | DaysOfWeek.Friday;
+    let newAvailability = { ...cal1Config.availability, availableDays };
+    await cal1.setProfileAvailability(newProfile, newAvailability);
+    const chainProfile = await cal1.profile();
+    chai.expect(chainProfile.email).to.equal(email);
+    const chainAvailability = await cal1.availability();
+    chai.expect(chainAvailability.availableDays).to.equal(availableDays);
+  });
+
+  const timesTestData = [
+    {
+      name: "get cal1 available meeting times when no other meetings",
+      calendar: 1,
+      meetings: [],
+      duration: 60,
+      expectedTimes: [570, 630, 690, 750, 810, 870, 930, 990],
+      expectedTimeZone: "America/New_York",
+    },
+    {
+      name: "get cal1 available meeting times when one other meeting",
+      calendar: 1,
+      meetings: [{ hour: 10, min: 30, duration: 60 }],
+      duration: 60,
+      expectedTimes: [570, 690, 750, 810, 870, 930, 990],
+      expectedTimeZone: "America/New_York",
+    },
+    {
+      name: "get cal2 available meeting times when no other meetings",
+      calendar: 2,
+      meetings: [],
+      duration: 60,
+      expectedTimes: [480, 540, 600, 660, 720, 780, 840, 900, 960],
+      expectedTimeZone: "Australia/Sydney",
+    },
+    {
+      name: "get cal2 available meeting times when one other meeting",
+      calendar: 2,
+      meetings: [
+        { hour: 10, min: 0, duration: 60 },
+        { hour: 15, min: 0, duration: 60 },
+      ],
+      duration: 60,
+      expectedTimes: [480, 540, 660, 720, 780, 840, 960],
+      expectedTimeZone: "Australia/Sydney"
+    },
+    {
+      name: "return empty array for meeting times request with unavailable day",
+      calendar: 1,
+      date: getNextYearMonthDay(DayOfWeek.Saturday),
+      duration: 60,
+      expectedTimes: [],
+      expectedTimeZone: "America/New_York",
+    },
+    {
+      name: "reject meeting times request with date in the past",
+      calendar: 2,
+      date: [1999, 12, 31],
+      duration: 60,
+      error: "Date is in the past",
+    },
+    {
+      name: "reject meeting times request with invalid date",
+      calendar: 2,
+      date: [getNextYearMonthDay(DayOfWeek.Saturday)[0] + 1, 0, 29],
+      duration: 60,
+      error: "Date and time are not valid.",
+    },
+  ];
+
+  timesTestData.forEach(
+    ({ name, calendar, date, meetings, duration, expectedTimes, expectedTimeZone, error }) =>
+      it(`should ${name}`, async function () {
+        const getCalendar = () => {
+          switch (calendar) {
+            case 1:
+              return { cal: cal1, signer: signer2 };
+            case 2:
+              return { cal: cal2, signer: signer1 };
+            case 3:
+              return { cal: cal3, signer: signer2 };
+            default:
+              throw new Error(`Unknown calendar: ${calendar}`);
+          }
+        };
+        const { cal, signer } = getCalendar();
+        const [year, month, day] =
+          date ?? getNextYearMonthDay(DayOfWeek.Monday);
+
+        if (meetings) {
+          const res0 = await cal.getMeetings(year, month, day);
+          chai.expect(res0).to.be.instanceof(Array);
+          chai.expect(res0).to.have.length(0);
+
+          await Promise.all(
+            meetings.map(async ({ hour, min, duration }) => {
+              await cal
+                .connect(signer)
+                .bookMeeting(year, month, day, hour, min, duration);
+            })
+          );
+
+          const res1 = await cal.getMeetings(year, month, day);
+          chai.expect(res1).to.be.instanceof(Array);
+          chai.expect(res1).to.have.length(meetings.length);
+        }
+
+        if (error) {
+          await chai
+            .expect(
+              cal.connect(signer).getAvailableTimes(year, month, day, duration)
+            )
+            .to.be.revertedWith(error);
+        } else {
+          const res2 = await cal.getAvailableTimes(year, month, day, duration);
+          chai.expect(res2.timeZone).to.equal(expectedTimeZone);
+          chai.expect(res2.times).to.be.instanceof(Array);
+          chai.expect(res2.times.filter((x) => x >= 0)).to.deep.equal(expectedTimes);
+        }
+      })
+  );
 
   it("books meetings with others within the available hours", async function () {
     const [year, month, day] = getNextYearMonthDay(DayOfWeek.Monday);
@@ -75,9 +208,8 @@ describe("Calendar", function () {
     chai.expect(res1).to.have.length(1);
 
     chai.expect(res1[0].attendee).to.equal(signer1Address);
-    chai.expect(res1[0].hour).to.equal(hour1);
-    chai.expect(res1[0].minute).to.equal(min1);
-    chai.expect(res1[0].duration).to.deep.equal(duration);
+    chai.expect(res1[0].startMinutes).to.equal(hour1 * 60 + min1);
+    chai.expect(res1[0].durationMinutes).to.equal(duration);
 
     const [hour2, min2] = [15, 30];
     await cal2
@@ -88,13 +220,11 @@ describe("Calendar", function () {
     chai.expect(res2).to.have.length(2);
 
     chai.expect(res2[0].attendee).to.equal(signer1Address);
-    chai.expect(res2[0].hour).to.equal(hour1);
-    chai.expect(res2[0].minute).to.equal(min1);
-    chai.expect(res2[0].duration).to.deep.equal(duration);
+    chai.expect(res2[0].startMinutes).to.equal(hour1 * 60 + min1);
+    chai.expect(res2[0].durationMinutes).to.deep.equal(duration);
     chai.expect(res2[1].attendee).to.equal(signer1Address);
-    chai.expect(res2[1].hour).to.equal(hour2);
-    chai.expect(res2[1].minute).to.equal(min2);
-    chai.expect(res2[1].duration).to.deep.equal(duration);
+    chai.expect(res2[1].startMinutes).to.equal(hour2 * 60 + min2);
+    chai.expect(res2[1].durationMinutes).to.deep.equal(duration);
   });
 
   it("cancels owned meetings", async function () {

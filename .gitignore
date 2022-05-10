@@ -14,3 +14,6 @@ coverage.json
 
 # macOS
 .DS_Store
+
+# TypeChain generated
+typechain-types/

@@ -1,38 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./CalendarTypes.sol";
 
 /// @title Storage of a calendar.
 /// @notice Stores the all information of a calendar.
 contract CalendarStorage {
+  /// @notice Maps the year, month, and day to an dynamic array of meetings.
+  mapping(uint256 => mapping(uint256 => mapping(uint256 => CalendarTypes.Meeting[]))) // year // month // day
+    public dateToMeetings;
 
-    /// @notice Contains the information of a meeting.
-    /// @param hour Hour the meeting starts.
-    /// @param minute Minunte the meeting starts.
-    /// @param duration Duration of the meeting in minutes.
-    struct Meeting {
-        address attendee;   // 32 bytes
-        uint16 hour;        // 2 bytes
-        uint16 minute;      // 2 bytes
-        uint16 duration;    // 2 bytes
-    }
+  /// @notice The profile info of the calendar owner.
+  CalendarTypes.Profile public profile;
 
-    /// @notice Maps the year, month, and day to an dynamic array of meetings.
-    mapping(uint256 => // year
-    mapping(uint256 => // month
-    mapping(uint256 => // day
-    Meeting[]
-    ))) public dateToMeetings;
-
-    /// @notice The email address of the calendar owner.
-    string public emailAddress;
-
-    /// @notice The email address of the calendar owner.
-    bool[7] public availableDays;
-
-    /// @notice _availableDays A fixed-size array of type `bool` and length `7` specifying on which days meetings can be booked.
-    uint16 internal earliestTimeInMinutes;
-
-    /// @notice _minutesAvailable The availablilty in minutes starting at the earliest time in which meetings can be booked.
-    uint16 internal minutesAvailable;
+  /// @notice The availability of the calendar owner.
+  CalendarTypes.Availability public availability;
 }
