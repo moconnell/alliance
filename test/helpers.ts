@@ -94,16 +94,17 @@ const deployCalendar = async (
   signer: Signer,
   { profile, availability }: CalendarConfig
 ) => {
-  let tx = await calendarFactory
+  const tx = await calendarFactory
     .connect(signer)
     .createCalendar(profile, availability);
-  let receipt = await tx.wait();
+  const receipt = await tx.wait();
 
-  const txEvent = receipt.events![0].args;
-  chai.expect(txEvent).not.to.be.undefined;
+  const events = receipt.events!;
+  const result = events[0].args ?? events[1].args;
+  chai.expect(result).not.to.be.undefined;
 
-  let ownerAddr = txEvent!.owner;
-  let calendarAddr = txEvent!.calendar;
+  const ownerAddr = result!.owner;
+  const calendarAddr = result!.calendar;
   chai.expect(ownerAddr).to.equal(await signer.getAddress());
 
   const calendarAddressFromMapping = await calendarFactory.userToCalendar(

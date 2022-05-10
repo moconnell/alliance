@@ -1,14 +1,16 @@
 {
   "name": "alliance",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Smart contracts for the Raid Guild Alliance calendar scheduling dApp",
+  "postinstall": "typechain",
   "scripts": {
+    "coverage": "npx hardhat coverage",
     "test": "npx hardhat test"
   },
   "author": "koloz",
   "contributors": [
-    "mheuer <> (https://github.com/Michael-A-Heuer/alliance)"
+    "mheuer <> (https://github.com/Michael-A-Heuer/alliance)",
+    "mr_bluesky <> (https://github.com/moconnell/alliance)"
   ],
   "license": "MIT",
   "devDependencies": {
