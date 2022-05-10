@@ -23,17 +23,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm list
     - run: mv ./.env.github .env
-    - run: npx hardhat compile
-    - run: ls -lrt ./typechain-types
-    - name: Sleep for 3 seconds, to ensure that typechain-types directory is created
-      run: sleep 3s
-      shell: bash
-    - run: ls -lrt .
-    - run: ls -lrt ./typechain-types
-    - run: ls -lrt ./typechain-types/contracts
-    - run: ls -lrt ./typechain-types/factories
-    - run: ls -lrt ./typechain-types/@openzeppelin
     - run: npx hardhat test
     - run: npx hardhat coverage
