@@ -5,7 +5,7 @@ import {
   CalendarFactory,
   Calendar__factory,
 } from "typechain-types";
-import { CalendarTypes } from "typechain-types/Calendar";
+import { CalendarTypes } from "typechain-types/contracts/Calendar";
 
 enum DayOfWeek {
   Sunday,

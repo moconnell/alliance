@@ -8,7 +8,7 @@ import {
   deployCalendar,
 } from "./helpers";
 import { Calendar, CalendarFactory } from "typechain-types";
-import { CalendarTypes } from "typechain-types/Calendar";
+import { CalendarTypes } from "typechain-types/contracts/Calendar";
 
 const assertProfileEqual = (
   profile1: CalendarTypes.ProfileStruct,
