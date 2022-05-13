@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Smart contracts for the Raid Guild Alliance calendar scheduling dApp",
   "scripts": {
+    "compile": "npx hardhat compile",
     "coverage": "npx hardhat coverage",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "start-local": "npx hardhat node",
+    "deploy-local": "wait-on tcp:8545 && npx hardhat run --network localhost ./scripts/deploy.ts"
   },
   "author": "koloz",
   "contributors": [
@@ -43,7 +46,8 @@
     "solidity-coverage": "^0.7.21",
     "ts-node": "^10.7.0",
     "typechain": "^8.0.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.6.4",
+    "wait-on": "^6.0.1"
   },
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "^4.6.0"

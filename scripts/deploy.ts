@@ -6,6 +6,7 @@
 
 import { ethers } from "hardhat";
 import { deployCalendarFactory } from "test/helpers";
+import { writeFile } from "fs/promises";
 
 const main = async () => {
   // Hardhat always runs the compile task when running scripts with its command
@@ -15,14 +16,17 @@ const main = async () => {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
-  const [deployer] = await ethers.getSigners();
+  const accounts = await ethers.getSigners();
+  const deployer = accounts[0];
 
   console.log("Deploying contracts with the account:", deployer.address);
-  console.log("Account balance:", (await deployer.getBalance()).toString());
 
   const calendarFactory = await deployCalendarFactory(deployer);
 
-  console.log(`CalendarFactory deployed to ${calendarFactory.address}`);
+  console.log("CalendarFactory deployed to:", calendarFactory.address);
+
+  await writeFile(".accounts", accounts.map(x => x.address).join("\n"));
+  await writeFile(".contract", calendarFactory.address);
 };
 
 // We recommend this pattern to be able to use async/await everywhere
