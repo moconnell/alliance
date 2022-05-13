@@ -15,10 +15,6 @@ jobs:
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag bishbashbosh/alliance:${{ steps.get_version.outputs.version }}
-      - name: Push the tagged Docker image
-        run: docker push bishbashbosh/alliance:${{ steps.get_version.outputs.version }}
-      - name: Build the latest Docker image
-        run: docker build . --file Dockerfile --tag bishbashbosh/alliance:latest
-      - name: Push the latest Docker image
-        run: docker push bishbashbosh/alliance:latest
+        run: docker build . -t bishbashbosh/alliance:${{ steps.get_version.outputs.version }} -t bishbashbosh/alliance:latest
+      - name: Push the Docker image
+        run: docker push -a bishbashbosh/alliance
