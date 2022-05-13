@@ -1,0 +1,10 @@
+.github
+.vscode
+artifacts
+cache
+coverage
+node_modules
+typechain-types
+.accounts
+.contract
+coverage.json
