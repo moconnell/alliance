@@ -50,6 +50,7 @@ library CalendarUtils {
       0
     );
 
+    //slither-disable-next-line timestamp
     require(_timestamp > block.timestamp, "Date is in the past");
     
     if (!timestampIsAvailableDay(_timestamp, _availability.availableDays)) {

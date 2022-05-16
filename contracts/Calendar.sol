@@ -163,6 +163,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
       _minute,
       0
     );
+    //slither-disable-next-line timestamp
     require(timestamp > block.timestamp, "Cannot book meeting in the past");
 
     require(
