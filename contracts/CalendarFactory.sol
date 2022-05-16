@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
 import "./Calendar.sol";
@@ -23,7 +23,7 @@ contract CalendarFactory {
   event CalendarRemoved(address indexed calendar, address indexed owner);
 
   /// @dev Contains the calendar implementation that is cloned.
-  address private calendarImplementation;
+  address private immutable calendarImplementation;
 
   /// @notice Maps between user and calendar addresses.
   mapping(address => address) public userToCalendar;
@@ -53,10 +53,10 @@ contract CalendarFactory {
 
     address clone = ClonesUpgradeable.clone(calendarImplementation);
 
-    Calendar(clone).initialize(msg.sender, _profile, _availability);
-
     userToCalendar[msg.sender] = clone;
     emit CalendarCreated(clone, msg.sender);
+
+    Calendar(clone).initialize(msg.sender, _profile, _availability);
   }
 
   /// @notice Remove the calendar

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "./CalendarStorage.sol";
 import "./CalendarTypes.sol";
@@ -50,6 +50,7 @@ library CalendarUtils {
       0
     );
 
+    //slither-disable-next-line timestamp
     require(_timestamp > block.timestamp, "Date is in the past");
     
     if (!timestampIsAvailableDay(_timestamp, _availability.availableDays)) {

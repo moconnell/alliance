@@ -132,7 +132,7 @@ describe("Calendar", () => {
       calendar: 2,
       date: [getNextYearMonthDay(DayOfWeek.Saturday)[0] + 1, 0, 29],
       duration: 60,
-      error: "Date and time are not valid.",
+      error: "Date is not valid.",
     },
   ];
 

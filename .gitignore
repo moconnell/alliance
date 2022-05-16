@@ -12,6 +12,9 @@ coverage.json
 # Jet Brains IDE files
 .idea
 
+# VS Code IDE files
+.vscode
+
 # macOS
 .DS_Store
 
