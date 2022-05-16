@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Copy config 
+      run: mv ./.env.github .env
     - name: Run static analysis
       uses: crytic/slither-action@v0.1.1
       continue-on-error: true
