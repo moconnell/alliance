@@ -1,6 +1,6 @@
 name: alliance static analysis
 
-on: [pull_request]
+on: [push]
 
 jobs:
   build:
