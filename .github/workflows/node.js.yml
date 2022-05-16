@@ -36,6 +36,8 @@ jobs:
       run: npx hardhat test
     - name: Run test coverage
       run: npx hardhat coverage
+    - name: Create bash profile
+      run: touch ~/.bash_profile
     - name: Run static analysis
       uses: crytic/slither-action@v0.1.1
       continue-on-error: true
