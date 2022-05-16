@@ -10,10 +10,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      security-events: write
-
     strategy:
       matrix:
         node-version: [16.x]
@@ -36,16 +32,3 @@ jobs:
       run: npx hardhat test
     - name: Run test coverage
       run: npx hardhat coverage
-    - name: Create bash profile
-      run: touch ~/.bash_profile
-    - name: Run static analysis
-      uses: crytic/slither-action@v0.1.1
-      continue-on-error: true
-      id: slither
-      with:
-        node-version: ${{ matrix.node-version }}
-        sarif: results.sarif
-    - name: Upload static analysis results
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: ${{ steps.slither.outputs.sarif }}
