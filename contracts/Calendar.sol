@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "./CalendarStorage.sol";
 import "./CalendarTypes.sol";
@@ -55,6 +55,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
     CalendarTypes.Profile calldata _profile,
     CalendarTypes.Availability calldata _availability
   ) external initializer {
+    require(_owner != address(0), "Zero");
     owner = _owner;
     profile = _profile;
     availability = _availability;
@@ -67,7 +68,10 @@ contract Calendar is CalendarStorage, CustomOwnable {
     availability = _availability;
   }
 
-  function setProfile(CalendarTypes.Profile calldata _profile) external onlyOwner {
+  function setProfile(CalendarTypes.Profile calldata _profile)
+    external
+    onlyOwner
+  {
     profile = _profile;
   }
 
@@ -89,22 +93,27 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _month,
     uint256 _day,
     uint16 _duration
-  ) public view returns (CalendarTypes.TimeArray memory) {
+  ) external view returns (CalendarTypes.TimeArray memory) {
     require(
       DateTime.isValidDateTime(_year, _month, _day, 0, 0, 0),
       "Date is not valid."
     );
 
-    CalendarTypes.Meeting[] memory existingMeetingsOnDate = getMeetings(_year, _month, _day);
-
-    return CalendarUtils.getAvailableTimes(
+    CalendarTypes.Meeting[] memory existingMeetingsOnDate = getMeetings(
       _year,
       _month,
-      _day,
-      _duration,
-      availability,
-      existingMeetingsOnDate
+      _day
     );
+
+    return
+      CalendarUtils.getAvailableTimes(
+        _year,
+        _month,
+        _day,
+        _duration,
+        availability,
+        existingMeetingsOnDate
+      );
   }
 
   /// @notice Books a meeting.
@@ -121,7 +130,7 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _hour,
     uint256 _minute,
     uint256 _duration
-  ) public {
+  ) external {
     require(msg.sender != owner, "Cannot book meeting with self");
     require(
       DateTime.isValidDateTime(_year, _month, _day, _hour, _minute, 0),
@@ -209,7 +218,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _duration
   ) internal view {
     // Compare existing meetings on the same day for collisions
-    CalendarTypes.Meeting[] memory existingMeetingsOnDate = getMeetings(_year, _month, _day);
+    CalendarTypes.Meeting[] memory existingMeetingsOnDate = getMeetings(
+      _year,
+      _month,
+      _day
+    );
 
     for (uint256 i = 0; i < existingMeetingsOnDate.length; i++) {
       CalendarTypes.Meeting memory other = existingMeetingsOnDate[i];
@@ -233,7 +246,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
       _days - 1
     );
 
-    CalendarTypes.Meeting[] memory existingMeetingsPrevDay = getMeetings(year, month, day);
+    CalendarTypes.Meeting[] memory existingMeetingsPrevDay = getMeetings(
+      year,
+      month,
+      day
+    );
 
     for (uint256 i = 0; i < existingMeetingsPrevDay.length; i++) {
       CalendarTypes.Meeting memory other = existingMeetingsPrevDay[i];
@@ -256,7 +273,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
       _days + 1
     );
 
-    CalendarTypes.Meeting[] memory existingMeetingsNextDay = getMeetings(year, month, day);
+    CalendarTypes.Meeting[] memory existingMeetingsNextDay = getMeetings(
+      year,
+      month,
+      day
+    );
 
     for (uint256 i = 0; i < existingMeetingsNextDay.length; i++) {
       // check if the other meeting ends before the new one starts
@@ -292,7 +313,11 @@ contract Calendar is CalendarStorage, CustomOwnable {
     uint256 _arrayPosition
   ) external {
     // search for the meeting position in the meetings array
-    CalendarTypes.Meeting[] memory meetingsOnDay = getMeetings(_year, _month, _day);
+    CalendarTypes.Meeting[] memory meetingsOnDay = getMeetings(
+      _year,
+      _month,
+      _day
+    );
 
     uint256 length = meetingsOnDay.length;
     require(_arrayPosition < length, "Meeting does not exist.");
