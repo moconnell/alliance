@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Button /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-bczRLJ bbkjqh"
+  >
+    <button
+      class="sc-gsnTZi kKvmkM"
+      data-testid="button"
+      type="button"
+    />
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Meetings /> should render meetings correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-iBkjds glKxzy"
+  >
+    <div
+      class="sc-ftvSup fgHqeX"
+    >
+      <div
+        class="css-b82b48"
+      >
+        ((Calendar))
+        <div
+          class="sc-jSMfEi jYYVij"
+        >
+          <div
+            class="sc-eCYdqJ kqBoYu"
+          >
+            <div
+              class="sc-bczRLJ lhfvPN"
+            >
+              <span
+                class="sc-hKMtZM cKEwGb"
+              >
+                20:00-20:30
+              </span>
+              <span
+                class="sc-gsnTZi cMktXF"
+              >
+                0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+              </span>
+              <span
+                class="sc-dkzDqf ezVsXa"
+              >
+                30 minute meeting
+              </span>
+            </div>
+          </div>
+          <div
+            class="sc-gKXOVf eKNJCQ"
+          >
+            Times shown in local time
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Meetings /> should render no meetings correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-iBkjds glKxzy"
+  >
+    <div
+      class="sc-ftvSup fgHqeX"
+    >
+      <div
+        class="css-b82b48"
+      >
+        ((Calendar))
+        <div
+          class="sc-jSMfEi jYYVij"
+        >
+          <div
+            class="sc-eCYdqJ kqBoYu"
+          />
+          <div
+            class="sc-gKXOVf eKNJCQ"
+          >
+            Times shown in local time
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
