@@ -1,6 +1,10 @@
 name: alliance front-end CI
 
-on: [push, pull_request]
+on: [push]
+
+defaults:
+  run:
+    working-directory: ./front-end
 
 jobs:
   build:
@@ -13,7 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: cd ./front-end
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
