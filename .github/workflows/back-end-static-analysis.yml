@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - run: cd back-end
     - name: Copy config 
       run: mv ./.env.github .env
     - name: Run static analysis
