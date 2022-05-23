@@ -6,7 +6,7 @@ name: alliance back-end CI
 on: 
   push:
     paths-ignore:
-      - 'front-end'
+      - 'front-end/**'
 
 jobs:
   build:

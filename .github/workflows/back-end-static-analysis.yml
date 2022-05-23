@@ -3,7 +3,7 @@ name: alliance static analysis
 on: 
   push:
     paths-ignore:
-      - 'front-end'
+      - 'front-end/**'
 
 jobs:
   build:
