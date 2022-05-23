@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TimeItem /> should render correctly when active=false 1`] = `
+<DocumentFragment>
+  <button
+    class="sc-bczRLJ fYCUyx"
+    style="background-color: transparent;"
+  >
+    9:45 AM
+  </button>
+</DocumentFragment>
+`;
+
+exports[`<TimeItem /> should render correctly when active=true 1`] = `
+<DocumentFragment>
+  <button
+    class="sc-bczRLJ fYCUyx"
+    style="background-color: rgb(255, 56, 100);"
+  >
+    9:45 AM
+  </button>
+</DocumentFragment>
+`;

@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Input /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-container css-1ke3x6f"
+  >
+    <div
+      class="css-b82b48"
+    >
+      ((ProfileInput))((AvailabilityInput))
+    </div>
+    <div
+      class="chakra-container css-5exlul"
+    >
+      <div
+        aria-disabled="true"
+        class="sc-bczRLJ bbkjqh"
+      >
+        <button
+          class="sc-gsnTZi cUAtCC"
+          data-testid="button"
+          disabled=""
+          type="submit"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

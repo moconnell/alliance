@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<MeetingCardList /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-gsnTZi iRVOtE"
+  >
+    <div
+      class="sc-bczRLJ xjAyt"
+    >
+      ((MeetingCard))
+    </div>
+    <div
+      class="sc-dkzDqf jlGsLJ"
+    >
+      Times shown in local time
+    </div>
+  </div>
+</DocumentFragment>
+`;

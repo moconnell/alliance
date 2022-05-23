@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Book /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-container css-122pq3t"
+    data-testid="container:book"
+  >
+    <h1
+      class="chakra-heading css-1lg6lob"
+    >
+      Book a 60 minute meeting with mr_bojangles...
+    </h1>
+    <div
+      class="css-b82b48"
+    >
+      <div
+        class="chakra-container css-19n8dai"
+        data-testid="container:profile"
+      >
+        <table
+          class="chakra-table css-0"
+          role="table"
+        >
+          <tbody
+            class="css-13c8hy8"
+          >
+            <tr
+              class="css-0"
+              role="row"
+            >
+              <th
+                class="css-1u3nbe2"
+              >
+                Location
+              </th>
+              <td
+                class="css-17arw3k"
+                role="gridcell"
+              >
+                The Big Smoke
+              </td>
+            </tr>
+            <tr
+              class="css-0"
+              role="row"
+            >
+              <th
+                class="css-1u3nbe2"
+              >
+                Time-Zone
+              </th>
+              <td
+                class="css-17arw3k"
+                role="gridcell"
+              >
+                Europe/London
+              </td>
+            </tr>
+            <tr
+              class="css-0"
+              role="row"
+            >
+              <th
+                class="css-1u3nbe2"
+              >
+                About
+              </th>
+              <td
+                class="css-17arw3k"
+                role="gridcell"
+              >
+                legend
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="chakra-container css-old1by"
+      >
+        ((Calendar))
+      </div>
+      <div
+        class="chakra-container css-2rlxtj"
+      >
+        <div
+          class="sc-eCYdqJ ilNZsE"
+        >
+          <div
+            class="sc-jSMfEi Teyip"
+          >
+            Select a time
+          </div>
+          <div
+            class="sc-gKXOVf itiFUh"
+          >
+            <div
+              class="sc-gKXOVf itiFUh"
+            >
+              <svg>
+                clock.svg
+              </svg>
+            </div>
+            <span
+              class="sc-dkzDqf jtoqIZ"
+            >
+              60 mins
+            </span>
+          </div>
+          <div
+            class="sc-gsnTZi efgEfA"
+          >
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              9:00 AM
+            </button>
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              10:00 AM
+            </button>
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              11:00 AM
+            </button>
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              12:00 PM
+            </button>
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              1:00 PM
+            </button>
+            <button
+              class="sc-bczRLJ fYCUyx"
+              style="background-color: transparent;"
+            >
+              2:00 PM
+            </button>
+          </div>
+          <div
+            class="sc-hKMtZM evkSWm"
+          >
+            Times shown in local time
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-container css-5exlul"
+    >
+      <button
+        class="chakra-button css-4xx2wk"
+        data-testid="button:book-meeting"
+        disabled=""
+        type="button"
+      >
+        Book meeting
+      </button>
+    </div>
+    ((ModalComponent))
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Book /> should render invalid calendar error 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-container css-122pq3t"
+    data-testid="container:invalid-calendar"
+  >
+    <h1
+      class="chakra-heading css-1lg6lob"
+    >
+      Hey, that's you!
+    </h1>
+    <p
+      class="chakra-text css-170nc93"
+    >
+      Did you really want to book a meeting with yourself?
+    </p>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Book /> should render invalid url error 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-container css-122pq3t"
+    data-testid="container:invalid-url"
+  >
+    <h1
+      class="chakra-heading css-1lg6lob"
+    >
+      Hmm...
+    </h1>
+    <p
+      class="chakra-text css-170nc93"
+    >
+      That looks like an invalid link - please check and try again!
+    </p>
+  </div>
+</DocumentFragment>
+`;

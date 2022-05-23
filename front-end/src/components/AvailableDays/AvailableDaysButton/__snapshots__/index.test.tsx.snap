@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AvailableDaysButton /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    aria-pressed="false"
+    class="circle-wrapper"
+    role="button"
+  >
+    <div
+      class="name-wrapper"
+    >
+      <span
+        class="dot"
+      />
+      Mon
+    </div>
+  </div>
+</DocumentFragment>
+`;

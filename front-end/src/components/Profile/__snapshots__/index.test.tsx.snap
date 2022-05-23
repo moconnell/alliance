@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Profile /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-bczRLJ fAuCSD"
+  >
+    <div
+      class="sc-jSMfEi ydOJn"
+    >
+      <div
+        class="sc-jSMfEi ydOJn"
+      >
+        <img
+          class="sc-gsnTZi ildFZT"
+          src="profile.jpg"
+        />
+      </div>
+      <div
+        class="sc-gKXOVf gLuteS"
+      >
+        <span
+          class="sc-dkzDqf jQRxLL"
+        >
+          me@my...com
+        </span>
+        <span
+          class="sc-hKMtZM lNMRc"
+        >
+          user1
+        </span>
+      </div>
+    </div>
+    <span
+      class="sc-eCYdqJ cmxxOi"
+    >
+      A user
+    </span>
+  </div>
+</DocumentFragment>
+`;

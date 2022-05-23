@@ -1,0 +1,99 @@
+{
+  "name": "alliance-dapp",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/react": "^2.1.0",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.3.0",
+    "@walletconnect/web3-provider": "^1.7.8",
+    "ethers": "^5.6.7",
+    "framer-motion": "^4.1.17",
+    "luxon": "^2.4.0",
+    "react": "^18.1.0",
+    "react-calendar": "^3.5.0",
+    "react-dom": "^18.1.0",
+    "react-error-boundary": "^3.1.4",
+    "react-hook-form": "^7.31.2",
+    "react-intl": "^6.0.2",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "^4.0.3",
+    "styled-components": "^5.3.3",
+    "typescript": "^4.4.4",
+    "web-vitals": "^2.1.4",
+    "web3modal": "^1.9.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "coverage": "npm run test -- --coverage",
+    "eject": "react-scripts eject",
+    "pretty": "npx prettier --write \"./**/*.{js,jsx,json,ts,tsx}\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@babel/preset-typescript": "^7.16.7",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
+    "@testing-library/user-event": "^14.1.1",
+    "@types/chai": "^4.3.1",
+    "@types/jest": "^27.5.0",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.31",
+    "@types/react": "^18.0.9",
+    "@types/react-calendar": "^3.5.0",
+    "@types/react-dom": "^18.0.3",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.25",
+    "@types/testing-library__jest-dom": "^5.14.3",
+    "@types/testing-library__react": "^10.2.0",
+    "@types/testing-library__user-event": "^4.2.0",
+    "babel-jest": "^28.1.0",
+    "chai": "^4.3.6",
+    "docker-cli-js": "^2.9.0",
+    "jest": "^28.1.0",
+    "prettier": "^2.6.2",
+    "react-error-overlay": "^6.0.11",
+    "react-select-event": "^5.5.0",
+    "ts-jest": "^28.0.2",
+    "ts-migrate": "^0.1.28",
+    "ts-node": "^10.8.0"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/index.tsx",
+      "!src/react-app-env.d.ts",
+      "!src/**/index.ts",
+      "!src/hooks/**",
+      "!src/mock/**",
+      "!src/testUtils/**",
+      "!src/typechain-types/**",
+      "!src/types/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "testMatch": [
+      "**/*.test.[jt]s?(x)"
+    ]
+  }
+}

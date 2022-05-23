@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Home /> should redirect to meetings page 1`] = `
+<DocumentFragment>
+  Meetings page
+</DocumentFragment>
+`;
+
+exports[`<Home /> should redirect to profile page 1`] = `
+<DocumentFragment>
+  Profile page
+</DocumentFragment>
+`;
+
+exports[`<Home /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-bczRLJ BjiRP"
+  >
+    <div
+      class="sc-gsnTZi doZlVs"
+    >
+      <div
+        class="sc-hKMtZM hQpMAX"
+      >
+        <div
+          class="sc-eCYdqJ kzZPPe"
+        >
+          <div
+            class="sc-jqUVSM hgqZPe"
+          >
+            <svg>
+              document.svg
+            </svg>
+          </div>
+          <svg>
+            alliance.svg
+          </svg>
+        </div>
+        <p
+          class="sc-gKXOVf dViJBq"
+        >
+          Alliance is a web3 coordination tool designed to align your calendar your network of colleagues. By utilizing the combination of connectivity to your 0x identity and the utility of Google or iCloud calendar, you can schedule a meeting with a simple handshake. Designed by Raid Guild (2022).
+          <br />
+          Connect wallet to get started.
+        </p>
+        ((Web3Button))
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

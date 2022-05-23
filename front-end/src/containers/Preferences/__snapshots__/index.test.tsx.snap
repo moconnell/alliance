@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Preferences /> should redirect to home page 1`] = `<DocumentFragment />`;
+
+exports[`<Preferences /> should render correctly 1`] = `
+<DocumentFragment>
+  <form
+    aria-label="form"
+  >
+    ((Input))
+  </form>
+</DocumentFragment>
+`;

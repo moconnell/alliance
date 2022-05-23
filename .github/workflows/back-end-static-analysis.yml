@@ -1,0 +1,35 @@
+name: alliance static analysis
+
+on: 
+  push:
+    paths-ignore:
+      - 'front-end/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: back-end
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Copy config 
+      run: mv ./.env.github .env
+    - name: Run static analysis
+      uses: crytic/slither-action@v0.1.1
+      continue-on-error: true
+      id: slither
+      with:
+        node-version: 16
+        sarif: results.sarif
+        target: back-end
+    - name: Upload static analysis results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.slither.outputs.sarif }}
