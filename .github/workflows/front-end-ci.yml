@@ -2,14 +2,13 @@ name: alliance front-end CI
 
 on: [push]
 
-defaults:
-  run:
-    working-directory: ./front-end
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./front-end
 
     strategy:
       matrix:

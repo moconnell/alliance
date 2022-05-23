@@ -5,14 +5,13 @@ name: alliance back-end CI
 
 on: [push]
 
-defaults:
-  run:
-    working-directory: ./back-end
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./back-end
 
     strategy:
       matrix:
