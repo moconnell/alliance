@@ -21,6 +21,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: front-end/package-lock.json
     - run: mv ./.env.github .env
     - run: npm ci
     - run: npm run coverage
