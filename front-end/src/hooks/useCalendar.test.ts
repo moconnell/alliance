@@ -1,29 +1,16 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { ChildProcessWithoutNullStreams, spawn } from "node:child_process";
+// import { Docker } from "docker-cli-js";
 import { useCalendar } from "./useCalendar";
 
 describe("useCalendar", () => {
-  let npm: ChildProcessWithoutNullStreams;
+  // let port = 10545;
 
-  beforeAll(() => {
-    npm = spawn("cd ../back-end && concurrently start-local deploy-local");
+  // beforeAll(async () => {
+  //   const docker = new Docker();
+  //   await docker.command(`run --rm -d -p ${port++}:7545 bishbashbosh/alliance`);
+  // });
 
-    npm.stdout.on("data", (data) => {
-      console.log(`stdout: ${data}`);
-    });
-
-    npm.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
-    });
-
-    npm.on("close", (code) => {
-      console.log(`child process exited with code ${code}`);
-    });
-  });
-
-  afterAll(() => {
-    npm?.kill();
-  });
+  // afterAll(() => {});
 
   it("should have calendar", async () => {
     const {
@@ -32,6 +19,6 @@ describe("useCalendar", () => {
       },
     } = renderHook(() => useCalendar());
 
-    await waitFor(() => expect(hasCalendar).toBeTruthy());
+    await waitFor(() => expect(hasCalendar).toBeFalsy());
   });
 });
