@@ -14,7 +14,7 @@ jobs:
         uses: battila7/get-version-action@v2
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-      - run: cd back-end
+      - run: cd ./back-end
       - name: Build the Docker image
         run: docker build . -t bishbashbosh/alliance:${{ steps.get_version.outputs.version }} -t bishbashbosh/alliance:latest
       - name: Push the Docker image
