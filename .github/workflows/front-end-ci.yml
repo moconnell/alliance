@@ -1,6 +1,9 @@
 name: alliance front-end CI
 
-on: [push]
+on: 
+  push:
+    paths-ignore:
+      - 'back-end'
 
 jobs:
   build:

@@ -1,6 +1,9 @@
 name: alliance static analysis
 
-on: [push]
+on: 
+  push:
+    paths-ignore:
+      - 'front-end'
 
 jobs:
   build:
