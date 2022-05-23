@@ -14,12 +14,7 @@ const Meetings = () => {
 
   useEffect(() => {
     async function loadMeetings() {
-      const meetingsOnDate = await getMeetings(date);
-
-      if (meetingsOnDate) {
-        console.log(`Meetings on ${date}`, meetingsOnDate);
-        setMeetings(meetingsOnDate);
-      }
+      setMeetings(await getMeetings(date) ?? []);
     }
 
     loadMeetings();
