@@ -11,8 +11,8 @@ jest.mock("ethers");
 describe("web3Reducer", () => {
   const mockAddress = "0x1234123412341234";
   const mockProvider = jest.fn();
-  const mockWeb3Provider = new ethers.providers.Web3Provider(mockProvider);
-  const mockSigner = mockWeb3Provider.getSigner(mockAddress);
+  const mockWeb3Provider = jest.fn();
+  const mockSigner = jest.fn();
 
   afterEach(() => jest.resetAllMocks());
   afterAll(() => jest.restoreAllMocks());
@@ -55,7 +55,7 @@ describe("web3Reducer", () => {
         provider: mockProvider,
         web3Provider: mockWeb3Provider,
         address: mockAddress,
-        signer: undefined,
+        signer: mockSigner,
         connect: null,
         disconnect: null,
       },

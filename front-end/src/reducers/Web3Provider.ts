@@ -3,10 +3,10 @@ import { ethers } from "ethers";
 export type Web3ProviderState = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any;
-  web3Provider: ethers.providers.Web3Provider | null | undefined;
+  web3Provider: ethers.Provider | null | undefined;
   address: string | null | undefined;
-  network: ethers.providers.Network | null | undefined;
-  signer: ethers.providers.JsonRpcSigner | null | undefined;
+  network: ethers.Network | null | undefined;
+  signer: ethers.JsonRpcSigner | null | undefined;
   connect: (() => Promise<void>) | null;
   disconnect: (() => Promise<void>) | null;
 };
