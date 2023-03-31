@@ -3,43 +3,43 @@
 exports[`<Meetings /> should render meetings correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-iBkjds glKxzy"
+    class="sc-iAEyYk cPjprN"
   >
     <div
-      class="sc-ftvSup fgHqeX"
+      class="sc-fsQiph kiFeGQ"
     >
       <div
         class="css-b82b48"
       >
         ((Calendar))
         <div
-          class="sc-jSMfEi jYYVij"
+          class="sc-jTrPJq bOCSzy"
         >
           <div
-            class="sc-eCYdqJ kqBoYu"
+            class="sc-eDDNvR gtHwmp"
           >
             <div
-              class="sc-bczRLJ lhfvPN"
+              class="sc-beqWaB ljmzQY"
             >
               <span
-                class="sc-hKMtZM cKEwGb"
+                class="sc-hLseeU RSRGY"
               >
                 20:00-20:30
               </span>
               <span
-                class="sc-gsnTZi cMktXF"
+                class="sc-gueYoa kfKkec"
               >
                 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
               </span>
               <span
-                class="sc-dkzDqf ezVsXa"
+                class="sc-dmqHEX gIMSGZ"
               >
                 30 minute meeting
               </span>
             </div>
           </div>
           <div
-            class="sc-gKXOVf eKNJCQ"
+            class="sc-gLDzan bxuKqx"
           >
             Times shown in local time
           </div>
@@ -53,23 +53,23 @@ exports[`<Meetings /> should render meetings correctly 1`] = `
 exports[`<Meetings /> should render no meetings correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-iBkjds glKxzy"
+    class="sc-iAEyYk cPjprN"
   >
     <div
-      class="sc-ftvSup fgHqeX"
+      class="sc-fsQiph kiFeGQ"
     >
       <div
         class="css-b82b48"
       >
         ((Calendar))
         <div
-          class="sc-jSMfEi jYYVij"
+          class="sc-jTrPJq bOCSzy"
         >
           <div
-            class="sc-eCYdqJ kqBoYu"
+            class="sc-eDDNvR gtHwmp"
           />
           <div
-            class="sc-gKXOVf eKNJCQ"
+            class="sc-gLDzan bxuKqx"
           >
             Times shown in local time
           </div>

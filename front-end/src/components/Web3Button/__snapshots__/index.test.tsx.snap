@@ -3,10 +3,10 @@
 exports[`<Web3Button /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button"
       type="button"
     >
@@ -19,10 +19,10 @@ exports[`<Web3Button /> should render correctly 1`] = `
 exports[`<Web3Button /> should render correctly 2`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button"
       type="button"
     >
@@ -35,10 +35,10 @@ exports[`<Web3Button /> should render correctly 2`] = `
 exports[`<Web3Button /> should render correctly 3`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button"
       title="Disconnect undefined null"
       type="button"
@@ -52,10 +52,10 @@ exports[`<Web3Button /> should render correctly 3`] = `
 exports[`<Web3Button /> should render correctly 4`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button"
       type="button"
     >

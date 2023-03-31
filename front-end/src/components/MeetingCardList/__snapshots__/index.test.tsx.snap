@@ -3,15 +3,15 @@
 exports[`<MeetingCardList /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-gsnTZi iRVOtE"
+    class="sc-gueYoa hHsXgJ"
   >
     <div
-      class="sc-bczRLJ xjAyt"
+      class="sc-beqWaB fOYWCI"
     >
       ((MeetingCard))
     </div>
     <div
-      class="sc-dkzDqf jlGsLJ"
+      class="sc-dmqHEX jpFHOq"
     >
       Times shown in local time
     </div>

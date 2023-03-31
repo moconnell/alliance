@@ -105,10 +105,10 @@ exports[`<AvailableDays /> should re-render after update 1`] = `
     </div>
   </div>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button:update"
       type="button"
     />
@@ -221,10 +221,10 @@ exports[`<AvailableDays /> should re-render after update 2`] = `
     </div>
   </div>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button:update"
       type="button"
     />
@@ -337,10 +337,10 @@ exports[`<AvailableDays /> should re-render after update 3`] = `
     </div>
   </div>
   <div
-    class="sc-bczRLJ bbkjqh"
+    class="sc-beqWaB gIoxQ"
   >
     <button
-      class="sc-gsnTZi kKvmkM"
+      class="sc-gueYoa bTpkmV"
       data-testid="button:update"
       type="button"
     />

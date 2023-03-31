@@ -3,36 +3,36 @@
 exports[`<Profile /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ fAuCSD"
+    class="sc-beqWaB fQueUu"
   >
     <div
-      class="sc-jSMfEi ydOJn"
+      class="sc-jTrPJq bhrRvO"
     >
       <div
-        class="sc-jSMfEi ydOJn"
+        class="sc-jTrPJq bhrRvO"
       >
         <img
-          class="sc-gsnTZi ildFZT"
+          class="sc-gueYoa iKNoBm"
           src="profile.jpg"
         />
       </div>
       <div
-        class="sc-gKXOVf gLuteS"
+        class="sc-gLDzan kGZipL"
       >
         <span
-          class="sc-dkzDqf jQRxLL"
+          class="sc-dmqHEX bpnTkg"
         >
           me@my...com
         </span>
         <span
-          class="sc-hKMtZM lNMRc"
+          class="sc-hLseeU insgSn"
         >
           user1
         </span>
       </div>
     </div>
     <span
-      class="sc-eCYdqJ cmxxOi"
+      class="sc-eDDNvR kXhsZF"
     >
       A user
     </span>

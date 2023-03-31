@@ -3,36 +3,36 @@
 exports[`<LoadingTransaction /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ gyIuTj"
+    class="sc-beqWaB fhrvBG"
   >
     <div
-      class="sc-gsnTZi hAKkNm"
+      class="sc-gueYoa gQVSSz"
     >
       <div
-        class="sc-dkzDqf hoZXih"
+        class="sc-dmqHEX jTQqpe"
       >
         <div
-          class="sc-hKMtZM dqHRYR"
+          class="sc-hLseeU cNNYZe"
         >
           <div
             class="chakra-spinner css-uhwdbi"
           >
             <span
-              class="css-f8n5zr"
+              class="css-8b45rq"
             >
               Loading...
             </span>
           </div>
         </div>
         <span
-          class="sc-eCYdqJ htbZVh"
+          class="sc-eDDNvR ibUBCG"
         >
           Your transaction is processing...
         </span>
       </div>
     </div>
     <div
-      class="sc-jSMfEi iemwlm"
+      class="sc-jTrPJq jFpeLz"
     >
       <div
         class="css-1w4130"
@@ -54,36 +54,36 @@ exports[`<LoadingTransaction /> should render correctly 1`] = `
 exports[`<LoadingTransaction /> should render correctly 2`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ gyIuTj"
+    class="sc-beqWaB fhrvBG"
   >
     <div
-      class="sc-gsnTZi hAKkNm"
+      class="sc-gueYoa gQVSSz"
     >
       <div
-        class="sc-dkzDqf hoZXih"
+        class="sc-dmqHEX jTQqpe"
       >
         <div
-          class="sc-hKMtZM dqHRYR"
+          class="sc-hLseeU cNNYZe"
         >
           <div
             class="chakra-spinner css-uhwdbi"
           >
             <span
-              class="css-f8n5zr"
+              class="css-8b45rq"
             >
               Loading...
             </span>
           </div>
         </div>
         <span
-          class="sc-eCYdqJ htbZVh"
+          class="sc-eDDNvR ibUBCG"
         >
           Your transaction is processing...
         </span>
       </div>
     </div>
     <div
-      class="sc-jSMfEi iemwlm"
+      class="sc-jTrPJq jFpeLz"
     >
       <div
         class="css-1w4130"
@@ -105,30 +105,30 @@ exports[`<LoadingTransaction /> should render correctly 2`] = `
 exports[`<LoadingTransaction /> should render correctly 3`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ gyIuTj"
+    class="sc-beqWaB fhrvBG"
   >
     <div
-      class="sc-gsnTZi hAKkNm"
+      class="sc-gueYoa gQVSSz"
     >
       <div
-        class="sc-dkzDqf hoZXih"
+        class="sc-dmqHEX jTQqpe"
       >
         <div
-          class="sc-hKMtZM dqHRYR"
+          class="sc-hLseeU cNNYZe"
         >
           <svg>
             double-check.svg
           </svg>
         </div>
         <span
-          class="sc-eCYdqJ htbZVh"
+          class="sc-eDDNvR ibUBCG"
         >
           Yay, your transaction is complete!
         </span>
       </div>
     </div>
     <div
-      class="sc-jSMfEi iemwlm"
+      class="sc-jTrPJq jFpeLz"
     >
       <div
         class="css-1w4130"

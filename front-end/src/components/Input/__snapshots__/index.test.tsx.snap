@@ -15,10 +15,10 @@ exports[`<Input /> should render correctly 1`] = `
     >
       <div
         aria-disabled="true"
-        class="sc-bczRLJ bbkjqh"
+        class="sc-beqWaB gIoxQ"
       >
         <button
-          class="sc-gsnTZi cUAtCC"
+          class="sc-gueYoa fUgYAf"
           data-testid="button"
           disabled=""
           type="submit"

@@ -6,11 +6,11 @@ exports[`<App /> should render correctly 1`] = `
     style="background: rgb(51, 51, 51); height: 100vh; display: flex; align-items: center; flex-direction: column; overflow-y: scroll;"
   >
     <div
-      class="sc-hKMtZM eyDpoF"
+      class="sc-hLseeU SXvCK"
     >
       ((Header))
       <div
-        class="sc-eCYdqJ ifHWKd"
+        class="sc-eDDNvR bTvVya"
       >
         ((Home))
       </div>

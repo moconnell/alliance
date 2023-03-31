@@ -18,7 +18,7 @@ exports[`<ProfileInput /> should render correctly 1`] = `
       class="css-1ygz371"
     >
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -49,7 +49,7 @@ exports[`<ProfileInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -71,7 +71,7 @@ exports[`<ProfileInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"

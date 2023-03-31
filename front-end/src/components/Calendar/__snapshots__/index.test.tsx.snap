@@ -53,7 +53,7 @@ exports[`<Calendar /> should render correctly 1`] = `
       class="react-calendar__viewContainer"
     >
       <div
-        class="react-calendar__month-view "
+        class="react-calendar__month-view"
       >
         <div
           style="display: flex; align-items: flex-end;"
@@ -63,7 +63,7 @@ exports[`<Calendar /> should render correctly 1`] = `
           >
             <div
               class="react-calendar__month-view__weekdays"
-              style="display: flex; flex-wrap: no-wrap;"
+              style="display: flex; flex-wrap: nowrap;"
             >
               <div
                 class="react-calendar__month-view__weekdays__weekday"
@@ -110,7 +110,7 @@ exports[`<Calendar /> should render correctly 1`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--current"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -121,7 +121,7 @@ exports[`<Calendar /> should render correctly 1`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--weekend"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -132,7 +132,7 @@ exports[`<Calendar /> should render correctly 1`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--weekend"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -456,7 +456,7 @@ exports[`<Calendar /> should render correctly 1`] = `
                 </abbr>
               </button>
               <button
-                class="react-calendar__tile react-calendar__tile--now react-calendar__month-view__days__day"
+                class="react-calendar__tile react-calendar__month-view__days__day"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
                 type="button"
               >
@@ -671,7 +671,7 @@ exports[`<Calendar /> should render correctly 2`] = `
       class="react-calendar__viewContainer"
     >
       <div
-        class="react-calendar__month-view "
+        class="react-calendar__month-view"
       >
         <div
           style="display: flex; align-items: flex-end;"
@@ -681,7 +681,7 @@ exports[`<Calendar /> should render correctly 2`] = `
           >
             <div
               class="react-calendar__month-view__weekdays"
-              style="display: flex; flex-wrap: no-wrap;"
+              style="display: flex; flex-wrap: nowrap;"
             >
               <div
                 class="react-calendar__month-view__weekdays__weekday"
@@ -728,7 +728,7 @@ exports[`<Calendar /> should render correctly 2`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--current"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -739,7 +739,7 @@ exports[`<Calendar /> should render correctly 2`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--weekend"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -750,7 +750,7 @@ exports[`<Calendar /> should render correctly 2`] = `
                 </abbr>
               </div>
               <div
-                class="react-calendar__month-view__weekdays__weekday"
+                class="react-calendar__month-view__weekdays__weekday react-calendar__month-view__weekdays__weekday--weekend"
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
               >
                 <abbr
@@ -1098,7 +1098,7 @@ exports[`<Calendar /> should render correctly 2`] = `
                 </abbr>
               </button>
               <button
-                class="react-calendar__tile react-calendar__tile--now react-calendar__month-view__days__day"
+                class="react-calendar__tile react-calendar__month-view__days__day"
                 disabled=""
                 style="flex-basis: 14.285714285714286%; flex-shrink: 0; flex-grow: 0; overflow: hidden;"
                 type="button"

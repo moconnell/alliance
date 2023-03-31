@@ -15,19 +15,19 @@ exports[`<Home /> should redirect to profile page 1`] = `
 exports[`<Home /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ BjiRP"
+    class="sc-beqWaB jkVgcC"
   >
     <div
-      class="sc-gsnTZi doZlVs"
+      class="sc-gueYoa icOafB"
     >
       <div
-        class="sc-hKMtZM hQpMAX"
+        class="sc-hLseeU gJlCrM"
       >
         <div
-          class="sc-eCYdqJ kzZPPe"
+          class="sc-eDDNvR fyGrvx"
         >
           <div
-            class="sc-jqUVSM hgqZPe"
+            class="sc-jsMahE ciXpfg"
           >
             <svg>
               document.svg
@@ -38,7 +38,7 @@ exports[`<Home /> should render correctly 1`] = `
           </svg>
         </div>
         <p
-          class="sc-gKXOVf dViJBq"
+          class="sc-gLDzan jdxDn"
         >
           Alliance is a web3 coordination tool designed to align your calendar your network of colleagues. By utilizing the combination of connectivity to your 0x identity and the utility of Google or iCloud calendar, you can schedule a meeting with a simple handshake. Designed by Raid Guild (2022).
           <br />

@@ -18,7 +18,7 @@ exports[`<AvailabilityInput /> should render correctly 1`] = `
       class="css-1ygz371"
     >
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -1815,7 +1815,7 @@ exports[`<AvailabilityInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -1845,7 +1845,7 @@ exports[`<AvailabilityInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -2138,7 +2138,7 @@ exports[`<AvailabilityInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -2431,7 +2431,7 @@ exports[`<AvailabilityInput /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -2477,7 +2477,7 @@ exports[`<AvailabilityInput /> should render correctly 2`] = `
       class="css-1ygz371"
     >
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -4274,7 +4274,7 @@ exports[`<AvailabilityInput /> should render correctly 2`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -4304,7 +4304,7 @@ exports[`<AvailabilityInput /> should render correctly 2`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -4597,7 +4597,7 @@ exports[`<AvailabilityInput /> should render correctly 2`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -4890,7 +4890,7 @@ exports[`<AvailabilityInput /> should render correctly 2`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -4936,7 +4936,7 @@ exports[`<AvailabilityInput /> should render correctly 3`] = `
       class="css-1ygz371"
     >
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -6733,7 +6733,7 @@ exports[`<AvailabilityInput /> should render correctly 3`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -6763,7 +6763,7 @@ exports[`<AvailabilityInput /> should render correctly 3`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -7056,7 +7056,7 @@ exports[`<AvailabilityInput /> should render correctly 3`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -7349,7 +7349,7 @@ exports[`<AvailabilityInput /> should render correctly 3`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -7395,7 +7395,7 @@ exports[`<AvailabilityInput /> should render correctly 4`] = `
       class="css-1ygz371"
     >
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -9192,7 +9192,7 @@ exports[`<AvailabilityInput /> should render correctly 4`] = `
         </div>
       </div>
       <div
-        class="css-tuh9u2"
+        class="css-1dbugrt"
       >
         <div
           class="chakra-form-control css-0"
@@ -9222,7 +9222,7 @@ exports[`<AvailabilityInput /> should render correctly 4`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -9515,7 +9515,7 @@ exports[`<AvailabilityInput /> should render correctly 4`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"
@@ -9808,7 +9808,7 @@ exports[`<AvailabilityInput /> should render correctly 4`] = `
         </div>
       </div>
       <div
-        class="css-0"
+        class="css-1gvp5h0"
       >
         <div
           class="chakra-form-control css-0"

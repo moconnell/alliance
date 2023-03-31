@@ -3,7 +3,7 @@
 exports[`<Header /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bczRLJ lkRbBT"
+    class="sc-beqWaB bdWBaO"
   >
     ((Web3Button))
   </div>
