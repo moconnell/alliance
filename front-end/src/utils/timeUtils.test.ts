@@ -2,6 +2,7 @@ import {
   assertValid,
   compare,
   fromTotalMins,
+  getDaysInMonth,
   tomorrow,
   totalMinutes,
   totalSeconds,
@@ -101,10 +102,12 @@ describe("totalSeconds", () => {
 });
 
 describe("tomorrow", () => {
+
   it("should return tomorrow's date", () => {
     const d = tomorrow();
     const now = new Date();
-    expect(d.getDate()).toBe(now.getDate() + 1);
+    const days = getDaysInMonth(now);
+    expect(d.getDate()).toBe((now.getDate() % days) + 1);
     expect(d.getHours()).toBe(0);
     expect(d.getMinutes()).toBe(0);
     expect(d.getSeconds()).toBe(0);

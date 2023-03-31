@@ -20,14 +20,12 @@ exports[`<Book /> should render correctly 1`] = `
       >
         <table
           class="chakra-table css-0"
-          role="table"
         >
           <tbody
             class="css-13c8hy8"
           >
             <tr
               class="css-0"
-              role="row"
             >
               <th
                 class="css-1u3nbe2"
@@ -36,14 +34,12 @@ exports[`<Book /> should render correctly 1`] = `
               </th>
               <td
                 class="css-17arw3k"
-                role="gridcell"
               >
                 The Big Smoke
               </td>
             </tr>
             <tr
               class="css-0"
-              role="row"
             >
               <th
                 class="css-1u3nbe2"
@@ -52,14 +48,12 @@ exports[`<Book /> should render correctly 1`] = `
               </th>
               <td
                 class="css-17arw3k"
-                role="gridcell"
               >
                 Europe/London
               </td>
             </tr>
             <tr
               class="css-0"
-              role="row"
             >
               <th
                 class="css-1u3nbe2"
@@ -68,7 +62,6 @@ exports[`<Book /> should render correctly 1`] = `
               </th>
               <td
                 class="css-17arw3k"
-                role="gridcell"
               >
                 legend
               </td>
@@ -85,71 +78,71 @@ exports[`<Book /> should render correctly 1`] = `
         class="chakra-container css-2rlxtj"
       >
         <div
-          class="sc-eCYdqJ ilNZsE"
+          class="sc-eDDNvR eUSrmv"
         >
           <div
-            class="sc-jSMfEi Teyip"
+            class="sc-jTrPJq jEgAbg"
           >
             Select a time
           </div>
           <div
-            class="sc-gKXOVf itiFUh"
+            class="sc-gLDzan dslaUA"
           >
             <div
-              class="sc-gKXOVf itiFUh"
+              class="sc-gLDzan dslaUA"
             >
               <svg>
                 clock.svg
               </svg>
             </div>
             <span
-              class="sc-dkzDqf jtoqIZ"
+              class="sc-dmqHEX glbJNG"
             >
               60 mins
             </span>
           </div>
           <div
-            class="sc-gsnTZi efgEfA"
+            class="sc-gueYoa fcbXzR"
           >
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               9:00 AM
             </button>
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               10:00 AM
             </button>
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               11:00 AM
             </button>
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               12:00 PM
             </button>
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               1:00 PM
             </button>
             <button
-              class="sc-bczRLJ fYCUyx"
+              class="sc-beqWaB cQqxDI"
               style="background-color: transparent;"
             >
               2:00 PM
             </button>
           </div>
           <div
-            class="sc-hKMtZM evkSWm"
+            class="sc-hLseeU kLESqp"
           >
             Times shown in local time
           </div>
@@ -162,7 +155,6 @@ exports[`<Book /> should render correctly 1`] = `
       <button
         class="chakra-button css-4xx2wk"
         data-testid="button:book-meeting"
-        disabled=""
         type="button"
       >
         Book meeting

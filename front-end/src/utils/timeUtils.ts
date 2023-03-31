@@ -1,6 +1,9 @@
 import Time from "../types/time";
 import assert from "assert";
 
+export const getDaysInMonth = (d: Date) =>
+  new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
 export const totalMinutes = (t: Time) => t.hours * 60 + t.minutes;
 
 export const totalSeconds = (t: Time) =>
